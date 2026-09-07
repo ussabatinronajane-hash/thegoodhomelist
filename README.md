@@ -1,4 +1,4 @@
-# Worth Buying
+# The Good Home List
 
 An Amazon affiliate site built on Astro, deployed to Netlify, edited through Decap CMS.
 
@@ -58,7 +58,7 @@ git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/worthbuying.git
+git remote add origin https://github.com/YOUR-USERNAME/thegoodhomelist.git
 git push -u origin main
 ```
 

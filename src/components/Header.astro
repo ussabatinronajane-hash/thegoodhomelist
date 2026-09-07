@@ -4,7 +4,7 @@ const path = Astro.url.pathname;
 ---
 <header class="site-header">
   <div class="wrap header-inner">
-    <a href="/" class="logo">Worth <span>Buying</span></a>
+    <a href="/" class="logo">The Good <span>Home List</span></a>
     <nav class="nav" aria-label="Main">
       {NAV.map((item) => (
         <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
