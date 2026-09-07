@@ -17,8 +17,18 @@ export const SITE = {
   social: '',
 } as const;
 
-/** Your Amazon Associates tracking ID. Every product link gets tagged with this. */
-export const AMAZON_TAG = 'REPLACE-WITH-YOUR-TAG-20';
+/**
+ * Amazon Associates tracking IDs.
+ *
+ * Every link is built with SITE_TAG at build time. A small script then swaps in
+ * PINTEREST_TAG when the visitor arrived from Pinterest, so your Associates
+ * dashboard shows which traffic source actually earns. If a visitor has
+ * JavaScript off, the link still works and still pays, just under SITE_TAG.
+ */
+export const AMAZON_TAG = 'findsmarthome-20';
+
+/** Applied when document.referrer is Pinterest. */
+export const PINTEREST_TAG = 'worthbuyingbyrona-20';
 
 /** The Amazon storefront your audience buys from. */
 export const AMAZON_DOMAIN = 'https://www.amazon.com';

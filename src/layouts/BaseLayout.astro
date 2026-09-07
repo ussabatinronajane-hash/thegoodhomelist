@@ -2,6 +2,7 @@
 import SEO from '../components/SEO.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import SourceAttribution from '../components/SourceAttribution.astro';
 import '../styles/global.css';
 
 export interface Props {
@@ -35,5 +36,6 @@ const path = Astro.url.pathname;
       <slot />
     </main>
     <Footer />
+    <SourceAttribution />
   </body>
 </html>

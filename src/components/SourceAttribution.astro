@@ -1,0 +1,55 @@
+---
+import { AMAZON_TAG, PINTEREST_TAG } from '../consts';
+
+/**
+ * Swaps the Amazon tracking ID based on where the visitor came from, so your
+ * Associates dashboard tells you which channel earns.
+ *
+ *   arrived from Pinterest  ->  worthbuyingbyrona-20
+ *   everything else         ->  findsmarthome-20  (already baked into the HTML)
+ *
+ * The referrer is only available on the first page of a visit, so the choice is
+ * stored in sessionStorage and reapplied as they read more guides.
+ *
+ * This is the only JavaScript on a content page. It is ~700 bytes, runs after
+ * paint, and degrades cleanly: with JS disabled every link still carries the
+ * default tag and still pays.
+ */
+---
+<script is:inline define:vars={{ siteTag: AMAZON_TAG, pinTag: PINTEREST_TAG }}>
+  (function () {
+    var KEY = 'src-tag';
+    var tag;
+
+    try {
+      tag = sessionStorage.getItem(KEY);
+    } catch (e) {
+      tag = null;
+    }
+
+    if (!tag) {
+      var ref = document.referrer || '';
+      var fromPinterest = /(^|\/\/|\.)(pinterest\.[a-z.]+|pin\.it)(\/|$)/i.test(ref);
+      tag = fromPinterest ? pinTag : siteTag;
+      try {
+        sessionStorage.setItem(KEY, tag);
+      } catch (e) {
+        /* private mode, ignore */
+      }
+    }
+
+    if (tag === siteTag) return; // links already carry this one
+
+    var links = document.querySelectorAll('a[href*="amazon."]');
+    for (var i = 0; i < links.length; i++) {
+      try {
+        var url = new URL(links[i].href);
+        if (!url.searchParams.has('tag')) continue;
+        url.searchParams.set('tag', tag);
+        links[i].href = url.href;
+      } catch (e) {
+        /* malformed href, leave it alone */
+      }
+    }
+  })();
+</script>

@@ -5,7 +5,7 @@ import { rehypeAmazonLinks, rehypeExternalLinks } from './src/lib/rehype-amazon-
 
 // Keep these two in sync with src/consts.ts
 const SITE_URL = 'https://worthbuyinghome.com';
-const AMAZON_TAG = 'REPLACE-WITH-YOUR-TAG-20';
+const AMAZON_TAG = 'findsmarthome-20';
 
 export default defineConfig({
   site: SITE_URL,

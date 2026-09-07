@@ -9,19 +9,30 @@ and the homepage ships around 24KB.
 
 ## 1. Before you deploy: two edits
 
-### Your Amazon tracking ID
+### Your Amazon tracking IDs
 
-Open `src/consts.ts` and replace the placeholder:
+Already set. Both of your Associates tracking IDs are wired in:
 
-```ts
-export const AMAZON_TAG = 'REPLACE-WITH-YOUR-TAG-20';
-```
+| Tag | Used when |
+|---|---|
+| `findsmarthome-20` | Default. Baked into every link at build time |
+| `worthbuyingbyrona-20` | Swapped in when the visitor arrived from Pinterest |
 
-Then open `astro.config.mjs` and change the same value near the top. It appears in both files
-because the config file cannot import from TypeScript source at build time.
+This means your Associates dashboard tells you which channel actually earns, rather than lumping
+everything together. Pinterest traffic reports under one ID, Google and direct under the other.
 
-Once set, **every** Amazon link on the site gets tagged automatically. You never type a tracking
-parameter by hand again.
+The swap runs in `src/components/SourceAttribution.astro`. It reads `document.referrer` on the
+first page of a visit, stores the result in `sessionStorage`, and reapplies it as the visitor
+reads more guides. It is about 700 bytes and the only JavaScript on a content page. With
+JavaScript disabled, every link still carries `findsmarthome-20` and still pays.
+
+To change either tag, edit `AMAZON_TAG` and `PINTEREST_TAG` in `src/consts.ts`, and `AMAZON_TAG`
+in `astro.config.mjs`. It appears in both files because the config cannot import from TypeScript
+source at build time.
+
+Verified working: a direct visit and a visit from google.com both produce `findsmarthome-20`, and
+a visit from pinterest.com produces `worthbuyingbyrona-20`, with
+`rel="nofollow sponsored noopener"` intact in all three cases.
 
 ### Your domain
 
@@ -231,7 +242,7 @@ The CMS admin does not work locally without extra setup. Edit files directly whe
 
 Before applying to Amazon Associates:
 
-- [ ] Amazon tracking ID set in both files
+- [x] Amazon tracking IDs set (findsmarthome-20 and worthbuyingbyrona-20)
 - [ ] Domain set in all four places
 - [ ] Contact email updated in the privacy policy
 - [ ] About page rewritten in your own words (it is drafted, not final)
