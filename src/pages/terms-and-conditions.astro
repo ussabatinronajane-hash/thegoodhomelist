@@ -1,0 +1,187 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../consts';
+
+// ---------------------------------------------------------------------------
+// TEMPLATE. Two things must be decided by you before this is accurate:
+//
+//   1. GOVERNING_LAW below. You operate from the Philippines and your audience
+//      is in the United States. Which law governs is a real choice with real
+//      consequences, and it is not one to guess at. Pick deliberately.
+//   2. Whether you are trading as an individual or a registered business. If
+//      you register an entity later, the operator name here must change.
+//
+// This is a solid starting template, not legal advice.
+// ---------------------------------------------------------------------------
+
+const GOVERNING_LAW = 'the Republic of the Philippines';
+const OPERATOR = 'Rona Jane Sabatin';
+const CONTACT_EMAIL = 'hello@thegoodhomelist.online';
+const updated = new Date().toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+---
+<BaseLayout
+  title="Terms and Conditions"
+  description={`The terms governing use of ${SITE.name}, including content accuracy, affiliate links, external sites and limitation of liability.`}
+>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: 'Terms and Conditions' }]} />
+    <article class="read prose">
+      <h1>Terms and Conditions</h1>
+      <p class="muted">Last updated: {updated}</p>
+
+      <p>
+        These terms govern your use of {SITE.name} at
+        {' '}<a href={SITE.url}>{SITE.url.replace('https://', '')}</a>. By using the site you
+        agree to them. If you do not agree, please do not use the site.
+      </p>
+      <p>
+        The site is operated by {OPERATOR}. You can reach us at
+        {' '}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+
+      <h2>What this site is</h2>
+      <p>
+        {SITE.name} publishes buying guides, product comparisons and how-to articles about home
+        products. It is an independent publication. It does not sell products, process payments,
+        hold inventory, or ship anything.
+      </p>
+      <p>
+        Every purchase you make happens on a third-party retailer's site, under that retailer's
+        terms. We are not a party to that transaction.
+      </p>
+
+      <h2>Content is information, not professional advice</h2>
+      <p>
+        Our articles are general information based on research and, where stated, hands-on use.
+        They are not professional advice.
+      </p>
+      <p>
+        Some guides touch on electrical work, plumbing, tools, structural fixings and home
+        maintenance. Those tasks carry real risk of injury and property damage, and the right
+        answer depends on your specific home, local building codes and your own competence. Where
+        a job involves electricity, gas, water supply, structural elements or working at height,
+        engage a qualified professional. Follow the manufacturer's instructions for any product
+        over anything written here.
+      </p>
+      <p>
+        You are responsible for deciding whether any suggestion is appropriate for your situation.
+      </p>
+
+      <h2>Accuracy and product information</h2>
+      <p>
+        We work to keep guides accurate and update them as products change, but we cannot
+        guarantee that everything is correct or current at the moment you read it. Products get
+        revised, discontinued and reformulated without notice.
+      </p>
+      <p>
+        We do not publish prices on this site, precisely because they change too often to state
+        reliably. Always check the current price, specification, availability and description on
+        the retailer's own page before buying. The retailer's listing is authoritative, not ours.
+      </p>
+      <p>
+        If you find an error, tell us at
+        {' '}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we will correct the page.
+      </p>
+
+      <h2>Affiliate links</h2>
+      <p>
+        This site contains affiliate links, including links to Amazon.com. If you buy through one,
+        we may earn a commission at no additional cost to you. As an Amazon Associate, I earn from
+        qualifying purchases.
+      </p>
+      <p>
+        Commission rates do not influence our rankings or recommendations. Our full position is
+        set out in the <a href="/affiliate-disclosure/">affiliate disclosure</a> and the
+        {' '}<a href="/editorial-policy/">editorial policy</a>.
+      </p>
+
+      <h2>External sites</h2>
+      <p>
+        We link to third-party websites. We do not control them and are not responsible for their
+        content, their products, their privacy practices or your dealings with them. A link is not
+        an endorsement of everything on the destination site.
+      </p>
+
+      <h2>Intellectual property</h2>
+      <p>
+        The written content, layout and original images on this site belong to {OPERATOR} unless
+        stated otherwise. You are welcome to quote a short extract with a visible link back to the
+        source page. You may not republish articles in whole or substantial part, or use our
+        content to train a commercial model, without written permission.
+      </p>
+      <p>
+        Product names, brand names and logos mentioned on this site belong to their respective
+        owners. Their use here is for identification and commentary. It does not imply any
+        affiliation with or endorsement by those owners. Amazon and the Amazon logo are trademarks
+        of Amazon.com, Inc. or its affiliates.
+      </p>
+      <p>
+        If you believe content here infringes your copyright, email
+        {' '}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> with details of the work and
+        the page in question, and we will review it promptly.
+      </p>
+
+      <h2>Acceptable use</h2>
+      <p>You agree not to:</p>
+      <ul>
+        <li>Use the site for any unlawful purpose</li>
+        <li>Attempt to gain unauthorised access to the site or its infrastructure</li>
+        <li>Scrape or copy the site systematically for republication</li>
+        <li>Introduce malicious code or attempt to disrupt the service</li>
+        <li>Misrepresent your identity when contacting us</li>
+      </ul>
+
+      <h2>Availability</h2>
+      <p>
+        We aim to keep the site available but do not guarantee uninterrupted access. We may
+        change, suspend or discontinue any part of it at any time without notice.
+      </p>
+
+      <h2>Limitation of liability</h2>
+      <p>
+        The site and its content are provided on an "as is" and "as available" basis, without
+        warranties of any kind, express or implied, to the fullest extent permitted by law.
+      </p>
+      <p>
+        To the fullest extent permitted by law, we are not liable for any indirect, incidental or
+        consequential loss arising from your use of this site, from reliance on its content, or
+        from any product you purchase through a link on it. This does not limit any liability
+        that cannot lawfully be excluded, including liability for death or personal injury caused
+        by negligence, or for fraud.
+      </p>
+      <p>
+        Any dispute you have about a product belongs with the retailer or manufacturer who sold it
+        to you.
+      </p>
+
+      <h2>Privacy</h2>
+      <p>
+        How we handle information is covered in our <a href="/privacy-policy/">privacy policy</a>
+        {' '}and <a href="/cookie-policy/">cookie policy</a>, which form part of these terms.
+      </p>
+
+      <h2>Changes to these terms</h2>
+      <p>
+        We may update these terms. The current version is always the one on this page, with the
+        date shown at the top. Continuing to use the site after a change means you accept the
+        updated terms.
+      </p>
+
+      <h2>Governing law</h2>
+      <p>
+        These terms are governed by the laws of {GOVERNING_LAW}, without regard to conflict of law
+        rules. Nothing here removes any consumer protection right you have under the mandatory law
+        of the country you live in.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about these terms go to
+        {' '}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </article>
+  </div>
+</BaseLayout>

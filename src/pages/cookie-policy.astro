@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../consts';
+
+// ---------------------------------------------------------------------------
+// ACCURACY NOTE, READ BEFORE EDITING
+//
+// This policy describes what the site ACTUALLY does today:
+//   - sets no cookies of its own
+//   - uses one sessionStorage value ("src-tag") for affiliate attribution
+//   - has NO analytics installed
+//
+// The moment you add analytics, ads, embedded video, a newsletter widget or a
+// social pixel, this page becomes inaccurate and must be updated. An honest
+// short policy is worth far more than a long boilerplate one that claims
+// things you do not do.
+// ---------------------------------------------------------------------------
+
+const CONTACT_EMAIL = 'hello@thegoodhomelist.online';
+const updated = new Date().toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+---
+<BaseLayout
+  title="Cookie Policy"
+  description={`What ${SITE.name} stores in your browser, what it does not, and what happens when you click through to Amazon.`}
+>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: 'Cookie Policy' }]} />
+    <article class="read prose">
+      <h1>Cookie Policy</h1>
+      <p class="muted">Last updated: {updated}</p>
+
+      <h2>The short version</h2>
+      <p>
+        {SITE.name} does not set any cookies. There are no advertising cookies, no analytics
+        cookies, and no tracking pixels on this site.
+      </p>
+      <p>
+        There is one thing stored in your browser, described below, and there are cookies set by
+        Amazon if you click one of our links and leave this site.
+      </p>
+
+      <h2>What we store</h2>
+      <p>
+        This site stores a single value in your browser's <strong>session storage</strong>, under
+        the name <code>src-tag</code>. Session storage is separate from cookies. It is never sent
+        to a server, it is not shared between sites, and your browser deletes it when you close
+        the tab.
+      </p>
+      <p>The value records which affiliate tracking ID applies to your visit, based on whether
+        you arrived from Pinterest or from somewhere else. It lets us tell which channel our
+        readers come from. It contains no personal information, no identifier for you, and nothing
+        that could be used to recognise you on a later visit or on another site.
+      </p>
+      <p>
+        If you would rather it were not stored, blocking site data for this domain in your browser
+        settings prevents it. The site works normally either way.
+      </p>
+
+      <h2>What we do not do</h2>
+      <ul>
+        <li>No advertising or retargeting cookies</li>
+        <li>No third-party analytics</li>
+        <li>No social media tracking pixels</li>
+        <li>No cross-site tracking or profile building</li>
+        <li>No selling or sharing of visitor data, because we do not collect any</li>
+      </ul>
+
+      <h2>Cookies set by Amazon</h2>
+      <p>
+        This site contains affiliate links to Amazon.com. When you click one, you leave this site
+        and arrive on Amazon, and Amazon sets its own cookies at that point. Those cookies record
+        that you arrived from here, so that any purchase can be credited to us.
+      </p>
+      <p>
+        We do not control those cookies, cannot read them, and do not receive any information
+        about you from them. What we see is an aggregate count of clicks and orders in our
+        Amazon Associates dashboard, with no individual visitor attached. Amazon's own privacy
+        notice and cookie policy govern what happens once you are on their site.
+      </p>
+      <p>
+        The same applies to any other retailer we may link to in future. Their policies, not ours,
+        apply once you leave.
+      </p>
+
+      <h2>Embedded content</h2>
+      <p>
+        This site does not currently embed video players, maps, comment systems or social feeds.
+        Those services commonly set their own cookies, so if we add any in future, this page will
+        be updated to say so before they go live.
+      </p>
+
+      <h2>Do Not Track</h2>
+      <p>
+        Because we do not track visitors, there is nothing for a Do Not Track signal to disable.
+        We honour it by default in the only meaningful way, which is by not collecting the data
+        in the first place.
+      </p>
+
+      <h2>Changes to this policy</h2>
+      <p>
+        If we add analytics or any other service that stores data in your browser, we will update
+        this page and change the date at the top before that service goes live.
+      </p>
+
+      <h2>Questions</h2>
+      <p>
+        Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we will answer.
+      </p>
+
+      <p class="muted" style="font-size:0.9rem;margin-top:36px;">
+        See also our <a href="/privacy-policy/">privacy policy</a> and
+        {' '}<a href="/affiliate-disclosure/">affiliate disclosure</a>.
+      </p>
+    </article>
+  </div>
+</BaseLayout>

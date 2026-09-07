@@ -3,119 +3,179 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { SITE } from '../consts';
 
-// TEMPLATE: review this against your actual analytics, email and hosting setup
-// before launch, and replace the contact email below.
+// ---------------------------------------------------------------------------
+// ACCURACY NOTE, READ BEFORE EDITING
+//
+// This policy describes what the site ACTUALLY does today. As of now that is:
+//   - hosted on Netlify, which keeps standard server request logs
+//   - a contact form handled by Netlify Forms
+//   - one sessionStorage value for affiliate attribution
+//   - NO analytics, NO ads, NO newsletter, NO embedded third-party content
+//
+// If you add any of those, update this page BEFORE the service goes live.
+// A privacy policy that overstates what you collect is as much a problem as
+// one that understates it, because it describes processing you cannot justify.
+// ---------------------------------------------------------------------------
+
 const CONTACT_EMAIL = 'hello@thegoodhomelist.online';
+const updated = new Date().toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
 ---
 <BaseLayout
   title="Privacy Policy"
-  description={`How ${SITE.name} collects, uses and protects information about visitors, including cookies, analytics and affiliate tracking.`}
+  description={`What information ${SITE.name} collects, what it does not collect, how it is used, and the rights you have over it.`}
 >
   <div class="wrap">
     <Breadcrumbs items={[{ label: 'Privacy Policy' }]} />
     <article class="read prose">
       <h1>Privacy Policy</h1>
-      <p class="muted">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+      <p class="muted">Last updated: {updated}</p>
 
       <p>
         This policy explains what information {SITE.name} collects when you visit
-        {' '}<a href={SITE.url}>{SITE.url.replace('https://', '')}</a>, how it is used, and the
-        choices you have.
+        {' '}<a href={SITE.url}>{SITE.url.replace('https://', '')}</a>, why, and what rights you
+        have over it. It is written to describe what this site actually does, rather than to cover
+        every possibility.
       </p>
 
-      <h2>Information collected automatically</h2>
+      <h2>The short version</h2>
       <p>
-        Like most websites, this site collects standard technical information when you visit,
-        which may include your IP address, browser type and version, device type, operating
-        system, referring page, pages viewed, and the time and date of your visit. This data is
-        aggregated and used to understand how the site is used and to keep it working properly.
+        We do not run analytics. We do not set cookies. We do not have accounts, a newsletter, or
+        advertising. Unless you email us or use the contact form, we hold nothing that identifies
+        you beyond the standard server logs our host keeps.
       </p>
 
-      <h2>Information you provide</h2>
+      <h2>Who is responsible</h2>
       <p>
-        If you contact us, we receive whatever you choose to send, such as your name, email
-        address and the contents of your message. We use it only to reply to you.
+        {SITE.name} is operated by Rona Jane Sabatin. For any privacy question or request, email
+        {' '}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
       </p>
 
-      <h2>Cookies</h2>
+      <h2>Server logs</h2>
       <p>
-        Cookies are small text files stored by your browser. This site and its third-party
-        partners may use them to remember preferences, measure traffic, and track affiliate
-        referrals so that a commission can be attributed correctly.
+        This site is hosted by Netlify. Like any web host, Netlify records standard technical
+        information when a page is requested: IP address, browser type, device type, the page
+        requested, the referring page, and the time. These logs exist to serve the site, keep it
+        secure and diagnose faults.
       </p>
       <p>
-        You can block or delete cookies through your browser settings. The site will still work,
-        though some features may behave differently.
+        We do not use these logs to build a profile of you, and we do not combine them with
+        anything else. Netlify processes them as our hosting provider under its own privacy terms.
+      </p>
+
+      <h2>The contact form</h2>
+      <p>
+        If you use the contact form, we receive the name, email address and message you enter.
+        Submissions are handled by Netlify Forms and are visible to us in the Netlify dashboard.
+      </p>
+      <p>
+        We use that information only to reply to you. We do not add you to a mailing list, and we
+        do not pass it to anyone else. Messages are kept while the conversation is useful and
+        deleted when it is not. You can ask us to delete yours sooner.
+      </p>
+
+      <h2>What we store in your browser</h2>
+      <p>
+        One value, in session storage, recording which affiliate tracking ID applies to your
+        visit. It is deleted when you close the tab, is never sent to a server, and contains
+        nothing that identifies you. The <a href="/cookie-policy/">cookie policy</a> covers this
+        in full.
       </p>
 
       <h2>Analytics</h2>
       <p>
-        We use privacy-conscious web analytics to measure aggregate traffic patterns, such as
-        which pages are read and where visitors arrive from. We do not use analytics data to
-        identify individual visitors.
+        None currently. If we add analytics later, we will choose a privacy-conscious service that
+        does not track individuals across sites, and we will update this page before it goes live.
       </p>
 
-      <h2>Affiliate links and third parties</h2>
+      <h2>Affiliate links and Amazon</h2>
       <p>
-        This site contains affiliate links, including links to Amazon.com. When you click one, the
-        destination site may set cookies or otherwise record that you arrived from here, so that
-        any resulting purchase can be credited. Those sites operate under their own privacy
-        policies, which we do not control. We recommend reading them.
+        This site contains affiliate links. When you click one, you leave this site and the
+        destination retailer records that you arrived from here so any purchase can be credited to
+        us. That happens on their site, under their privacy policy.
       </p>
       <p>
-        Amazon's privacy notice is available on the Amazon website. Our own use of affiliate
-        links is described in the <a href="/affiliate-disclosure/">affiliate disclosure</a>.
+        What we see in return is aggregate: a count of clicks, items ordered and commission earned.
+        We do not receive your name, your email address, your payment details, or anything else
+        that identifies you as an individual customer. Amazon does not share that with us.
       </p>
-
-      <h2>Data sharing</h2>
       <p>
-        We do not sell your personal information. We do not share it with third parties except
-        where necessary to operate the site, such as hosting and analytics providers acting on
-        our behalf, or where required by law.
+        Our commercial relationship is described in the
+        {' '}<a href="/affiliate-disclosure/">affiliate disclosure</a>.
       </p>
 
-      <h2>Data retention</h2>
+      <h2>What we never do</h2>
+      <ul>
+        <li>Sell or rent personal information. We have none to sell</li>
+        <li>Run advertising or retargeting</li>
+        <li>Track you across other websites</li>
+        <li>Create user accounts or profiles</li>
+        <li>Use your contact message for marketing</li>
+      </ul>
+
+      <h2>Legal basis for processing</h2>
       <p>
-        Aggregate analytics data is retained for as long as it is useful for understanding site
-        performance. Messages you send us are kept only as long as needed to handle your enquiry.
+        For readers in the European Economic Area and the United Kingdom: server logs are
+        processed on the basis of our legitimate interest in operating and securing the site.
+        Contact form messages are processed on the basis of your consent, given by choosing to
+        send us a message, and our legitimate interest in replying to you.
       </p>
 
       <h2>Your rights</h2>
       <p>
-        Depending on where you live, you may have the right to request access to the personal
-        information we hold about you, ask for it to be corrected or deleted, or object to
-        certain processing. Residents of the European Economic Area and the United Kingdom have
-        these rights under the GDPR. Residents of California have comparable rights under the
-        CCPA, including the right to know what is collected and the right to request deletion.
+        Depending on where you live, you may have the right to access the personal information we
+        hold about you, have it corrected or deleted, object to how it is processed, or receive a
+        copy of it. Readers in the EEA and UK have these rights under the GDPR. Readers in
+        California have comparable rights under the CCPA and CPRA, including the right to know
+        what is collected and the right to request deletion.
       </p>
       <p>
-        To make a request, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        We do not sell or share personal information as those laws define it, so there is nothing
+        to opt out of, but you are welcome to confirm that with us.
+      </p>
+      <p>
+        To exercise any right, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. We
+        will respond within 30 days. We will not charge you or make you justify the request.
+      </p>
+
+      <h2>International transfers</h2>
+      <p>
+        The site is operated from the Philippines and hosted on infrastructure in the United
+        States and elsewhere. If you are in the EEA or UK, your information may be processed
+        outside your country. Where that happens, it is limited to the server logs and contact
+        messages described above.
       </p>
 
       <h2>Children</h2>
       <p>
-        This site is not directed at children under 13 and we do not knowingly collect personal
-        information from them. If you believe a child has provided us with information, contact
-        us and we will delete it.
+        This site is intended for adults and is not directed at children under 13. We do not
+        knowingly collect information from them. If you believe a child has sent us information,
+        email us and we will delete it.
       </p>
 
       <h2>Security</h2>
       <p>
-        The site is served over HTTPS. No method of transmission or storage is completely secure,
-        so we cannot guarantee absolute security, but we take reasonable measures to protect
-        information.
+        The site is served over HTTPS and is a static site, which means there is no database of
+        visitor information to breach. No system is perfectly secure, but the most reliable
+        protection is not holding data in the first place, and that is the approach here.
       </p>
 
       <h2>Changes to this policy</h2>
       <p>
-        We may update this policy from time to time. Changes are posted on this page with a
-        revised date at the top.
+        We will update this page if what we collect changes, with a revised date at the top. If a
+        change is significant, we will say what changed rather than quietly editing the text.
       </p>
 
       <h2>Contact</h2>
       <p>
-        Questions about this policy can go to
-        {' '}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+      </p>
+
+      <p class="muted" style="font-size:0.9rem;margin-top:36px;">
+        See also our <a href="/cookie-policy/">cookie policy</a>,
+        {' '}<a href="/affiliate-disclosure/">affiliate disclosure</a> and
+        {' '}<a href="/terms-and-conditions/">terms and conditions</a>.
       </p>
     </article>
   </div>
