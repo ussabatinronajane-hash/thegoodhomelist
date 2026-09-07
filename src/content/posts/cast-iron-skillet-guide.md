@@ -6,6 +6,7 @@ primaryKeyword: "how to choose a cast iron skillet"
 category: "kitchen"
 pubDate: 2026-09-03
 featured: true
+draft: true
 author: "Rona Jane Sabatin"
 faqs:
   - question: "What size cast iron skillet should I buy first?"
@@ -15,6 +16,13 @@ faqs:
   - question: "Can you use soap on cast iron?"
     answer: "Yes. Modern dish soap does not strip polymerized seasoning, which is a bonded layer rather than a coating of oil. The actual rules are simple: no long soaking, no dishwasher, and dry it fully over heat before storing."
 ---
+
+<!--
+  UNVERIFIED ASIN - DO NOT PUBLISH AS IS
+  The Amazon link in this post was written as a template demonstration, not
+  looked up on Amazon. Replace it with a real product URL from SiteStripe
+  before setting draft: false.
+-->
 
 Cast iron is one of the few things you can buy once. A skillet from 1940 still cooks, which is not
 something you can say about any non-stick pan made this decade.
