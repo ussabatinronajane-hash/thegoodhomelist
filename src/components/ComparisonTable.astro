@@ -1,0 +1,48 @@
+---
+import { amazonUrl, AFFILIATE_ATTRS } from '../lib/amazon';
+
+export interface Props {
+  /** Column headers after the product name column. */
+  columns: string[];
+  rows: {
+    name: string;
+    asin?: string;
+    /** Values matching the `columns` order. */
+    values: string[];
+    /** Highlight this row as the top pick. */
+    best?: boolean;
+  }[];
+  caption?: string;
+}
+
+const { columns, rows, caption } = Astro.props;
+---
+<div class="compare-scroll">
+  <table class="compare">
+    {caption && <caption class="muted" style="text-align:left;padding-bottom:10px;font-size:0.88rem;">{caption}</caption>}
+    <thead>
+      <tr>
+        <th scope="col">Product</th>
+        {columns.map((c) => <th scope="col">{c}</th>)}
+        <th scope="col"><span class="sr-only">Link</span>Buy</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          <th scope="row" class={row.best ? 'pick' : ''}>
+            {row.name}{row.best && <span class="muted" style="font-weight:400;"> (top pick)</span>}
+          </th>
+          {row.values.map((v) => <td>{v}</td>)}
+          <td>
+            {row.asin ? (
+              <a href={amazonUrl(row.asin)} {...AFFILIATE_ATTRS}>Check price</a>
+            ) : (
+              <span class="muted">&mdash;</span>
+            )}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

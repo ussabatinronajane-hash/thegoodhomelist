@@ -1,0 +1,18 @@
+---
+export interface Props {
+  faqs: { question: string; answer: string }[];
+  heading?: string;
+}
+const { faqs, heading = 'Frequently Asked Questions' } = Astro.props;
+---
+{faqs.length > 0 && (
+  <section class="faq">
+    <h2>{heading}</h2>
+    {faqs.map((f) => (
+      <details>
+        <summary>{f.question}</summary>
+        <p>{f.answer}</p>
+      </details>
+    ))}
+  </section>
+)}

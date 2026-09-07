@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../consts';
+
+// TEMPLATE: review this against your actual analytics, email and hosting setup
+// before launch, and replace the contact email below.
+const CONTACT_EMAIL = 'hello@worthbuyinghome.com';
+---
+<BaseLayout
+  title="Privacy Policy"
+  description={`How ${SITE.name} collects, uses and protects information about visitors, including cookies, analytics and affiliate tracking.`}
+>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: 'Privacy Policy' }]} />
+    <article class="read prose">
+      <h1>Privacy Policy</h1>
+      <p class="muted">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+      <p>
+        This policy explains what information {SITE.name} collects when you visit
+        {' '}<a href={SITE.url}>{SITE.url.replace('https://', '')}</a>, how it is used, and the
+        choices you have.
+      </p>
+
+      <h2>Information collected automatically</h2>
+      <p>
+        Like most websites, this site collects standard technical information when you visit,
+        which may include your IP address, browser type and version, device type, operating
+        system, referring page, pages viewed, and the time and date of your visit. This data is
+        aggregated and used to understand how the site is used and to keep it working properly.
+      </p>
+
+      <h2>Information you provide</h2>
+      <p>
+        If you contact us, we receive whatever you choose to send, such as your name, email
+        address and the contents of your message. We use it only to reply to you.
+      </p>
+
+      <h2>Cookies</h2>
+      <p>
+        Cookies are small text files stored by your browser. This site and its third-party
+        partners may use them to remember preferences, measure traffic, and track affiliate
+        referrals so that a commission can be attributed correctly.
+      </p>
+      <p>
+        You can block or delete cookies through your browser settings. The site will still work,
+        though some features may behave differently.
+      </p>
+
+      <h2>Analytics</h2>
+      <p>
+        We use privacy-conscious web analytics to measure aggregate traffic patterns, such as
+        which pages are read and where visitors arrive from. We do not use analytics data to
+        identify individual visitors.
+      </p>
+
+      <h2>Affiliate links and third parties</h2>
+      <p>
+        This site contains affiliate links, including links to Amazon.com. When you click one, the
+        destination site may set cookies or otherwise record that you arrived from here, so that
+        any resulting purchase can be credited. Those sites operate under their own privacy
+        policies, which we do not control. We recommend reading them.
+      </p>
+      <p>
+        Amazon's privacy notice is available on the Amazon website. Our own use of affiliate
+        links is described in the <a href="/affiliate-disclosure/">affiliate disclosure</a>.
+      </p>
+
+      <h2>Data sharing</h2>
+      <p>
+        We do not sell your personal information. We do not share it with third parties except
+        where necessary to operate the site, such as hosting and analytics providers acting on
+        our behalf, or where required by law.
+      </p>
+
+      <h2>Data retention</h2>
+      <p>
+        Aggregate analytics data is retained for as long as it is useful for understanding site
+        performance. Messages you send us are kept only as long as needed to handle your enquiry.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        Depending on where you live, you may have the right to request access to the personal
+        information we hold about you, ask for it to be corrected or deleted, or object to
+        certain processing. Residents of the European Economic Area and the United Kingdom have
+        these rights under the GDPR. Residents of California have comparable rights under the
+        CCPA, including the right to know what is collected and the right to request deletion.
+      </p>
+      <p>
+        To make a request, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+
+      <h2>Children</h2>
+      <p>
+        This site is not directed at children under 13 and we do not knowingly collect personal
+        information from them. If you believe a child has provided us with information, contact
+        us and we will delete it.
+      </p>
+
+      <h2>Security</h2>
+      <p>
+        The site is served over HTTPS. No method of transmission or storage is completely secure,
+        so we cannot guarantee absolute security, but we take reasonable measures to protect
+        information.
+      </p>
+
+      <h2>Changes to this policy</h2>
+      <p>
+        We may update this policy from time to time. Changes are posted on this page with a
+        revised date at the top.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy can go to
+        {' '}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </article>
+  </div>
+</BaseLayout>

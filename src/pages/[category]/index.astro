@@ -1,0 +1,50 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { CATEGORIES, SITE } from '../../consts';
+
+export async function getStaticPaths() {
+  return CATEGORIES.map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
+}
+
+const { cat } = Astro.props;
+
+const posts = (
+  await getCollection('posts', ({ data }) => !data.draft && data.category === cat.slug)
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const schema = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: cat.name, item: `${SITE.url}/${cat.slug}/` },
+    ],
+  },
+  {
+    '@type': 'CollectionPage',
+    name: cat.heading,
+    description: cat.description,
+    url: `${SITE.url}/${cat.slug}/`,
+  },
+];
+---
+<BaseLayout title={cat.heading} description={cat.description} schema={schema}>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: cat.name }]} />
+    <div class="read" style="margin-bottom:36px;">
+      <h1>{cat.heading}</h1>
+      <p class="muted" style="font-size:1.06rem;">{cat.intro}</p>
+    </div>
+
+    {posts.length > 0 ? (
+      <ul class="card-grid">
+        {posts.map((post) => <PostCard post={post} />)}
+      </ul>
+    ) : (
+      <p class="muted">Guides for this category are on the way.</p>
+    )}
+  </div>
+</BaseLayout>

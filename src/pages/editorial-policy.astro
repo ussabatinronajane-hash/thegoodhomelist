@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../consts';
+---
+<BaseLayout
+  title="How We Test and Choose Products"
+  description="Our editorial and testing policy: how products get picked, how rankings are decided, and why no brand can pay for a spot in a guide."
+>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: 'Editorial Policy' }]} />
+    <article class="read prose">
+      <h1>How We Test and Choose Products</h1>
+
+      <p class="muted" style="font-size:1.08rem;">
+        A guide is only useful if you know how the picks were made. Here is the process,
+        including its limits.
+      </p>
+
+      <h2>How products get shortlisted</h2>
+      <p>Every guide starts with a shortlist built from four inputs:</p>
+      <ul>
+        <li><strong>Hands-on use</strong> where I own or have used the product directly.</li>
+        <li><strong>Verified owner reviews</strong> read in volume, with weight given to reviews written 6 to 18 months after purchase, because that is when durability problems appear.</li>
+        <li><strong>Manufacturer specifications</strong> checked against the actual claims, not the marketing copy.</li>
+        <li><strong>Independent lab and expert testing</strong> from established testing outlets where it exists, cited in the guide when used.</li>
+      </ul>
+
+      <h2>How rankings are decided</h2>
+      <p>
+        Products are scored on the criteria that matter for that specific category, and those
+        criteria are stated in each guide. A smart plug is judged on protocol support, app
+        reliability and load rating. A cast iron pan is judged on seasoning, weight balance and
+        heat retention. There is no single universal scoring system, because that would be fake.
+      </p>
+      <p>
+        Where I have not personally used a product, the guide says so plainly. Research-based
+        picks are labeled as research-based.
+      </p>
+
+      <h2>What does not influence rankings</h2>
+      <ul>
+        <li>Commission rate. Higher paying products do not get better placement.</li>
+        <li>Brand relationships. No brand receives an advance copy of a guide.</li>
+        <li>Free products. If a sample is ever accepted, it is disclosed in that guide.</li>
+        <li>Advertising. There are no paid placements on this site.</li>
+      </ul>
+
+      <h2>Updates and corrections</h2>
+      <p>
+        Guides carry a visible last-updated date. Product roundups are reviewed at least twice a
+        year and sooner when a pick is discontinued or a significant new model ships. Corrections
+        are made to the page itself rather than quietly deleted, and material changes are noted.
+      </p>
+      <p>
+        Found something wrong? <a href="/contact/">Send it over</a>.
+      </p>
+
+      <h2>The honest limitation</h2>
+      <p>
+        This is a small independent site, not a lab with a testing budget. I cannot buy every
+        product in a category, and I will not pretend otherwise. What I can do is be specific
+        about what I have used, transparent about what I have researched, and quick to correct
+        anything that turns out to be wrong.
+      </p>
+    </article>
+  </div>
+</BaseLayout>

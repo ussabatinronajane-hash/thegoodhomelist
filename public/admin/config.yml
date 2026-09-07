@@ -1,0 +1,138 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Drafts land in a pull request instead of going straight live.
+publish_mode: editorial_workflow
+
+media_folder: "public/images"
+public_folder: "/images"
+
+site_url: https://worthbuyinghome.com
+display_url: https://worthbuyinghome.com
+logo_url: https://worthbuyinghome.com/favicon.svg
+
+collections:
+  - name: "posts"
+    label: "Guides & Reviews"
+    label_singular: "Guide"
+    folder: "src/content/posts"
+    create: true
+    slug: "{{slug}}"
+    preview_path: "{{category}}/{{slug}}"
+    summary: "{{title}}  ·  {{category}}"
+    sortable_fields: ["pubDate", "title", "category"]
+    view_groups:
+      - label: "Category"
+        field: category
+    fields:
+      - label: "Title (H1)"
+        name: "title"
+        widget: "string"
+        hint: "Max 70 characters. Lead with the primary keyword. Example: Best Smart Plugs for Older Homes"
+        pattern: ['^.{10,70}$', "Keep the title between 10 and 70 characters"]
+
+      - label: "Meta description"
+        name: "description"
+        widget: "text"
+        hint: "140 to 155 characters. This is what shows in Google. Write it to earn the click, not to describe the page."
+        pattern: ['^.{50,160}$', "Keep the meta description between 50 and 160 characters"]
+
+      - label: "Excerpt (2 sentences)"
+        name: "excerpt"
+        widget: "text"
+        hint: "Two sentences, SEO optimized. Used on cards, RSS and social shares."
+
+      - label: "Primary keyword"
+        name: "primaryKeyword"
+        widget: "string"
+        required: false
+        hint: "For your own tracking. Not published on the page."
+
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Smart Home", value: "smart-home" }
+          - { label: "Kitchen & Dining", value: "kitchen" }
+          - { label: "Home & Living", value: "home" }
+          - { label: "Patio, Lawn & Garden", value: "garden" }
+          - { label: "Tools & Home Improvement", value: "tools" }
+
+      - label: "Published date"
+        name: "pubDate"
+        widget: "datetime"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        picker_utc: true
+
+      - label: "Last updated"
+        name: "updatedDate"
+        widget: "datetime"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        picker_utc: true
+        required: false
+        hint: "Bump this whenever you refresh the guide. It shows on the page and in schema."
+
+      - label: "Featured image"
+        name: "image"
+        widget: "image"
+        required: false
+        hint: "1200x675 WebP works best. Compress before uploading."
+
+      - label: "Image alt text"
+        name: "imageAlt"
+        widget: "string"
+        required: false
+        hint: "Describe the image for a person who cannot see it. Work the keyword in naturally, do not stuff it."
+
+      - label: "Feature on homepage"
+        name: "featured"
+        widget: "boolean"
+        default: false
+        required: false
+
+      - label: "Draft"
+        name: "draft"
+        widget: "boolean"
+        default: false
+        required: false
+        hint: "Drafts are excluded from the build, sitemap and RSS."
+
+      - label: "Author"
+        name: "author"
+        widget: "string"
+        default: "Rona Jane Sabatin"
+
+      - label: "FAQs"
+        name: "faqs"
+        widget: "list"
+        required: false
+        label_singular: "FAQ"
+        summary: "{{fields.question}}"
+        hint: "These render as an accordion and generate FAQPage schema. Pull real questions from People Also Ask."
+        fields:
+          - { label: "Question", name: "question", widget: "string" }
+          - { label: "Answer", name: "answer", widget: "text", hint: "40 to 60 words. Answer directly in the first sentence for featured snippet chances." }
+
+      - label: "Related guide slugs"
+        name: "related"
+        widget: "list"
+        required: false
+        field: { label: "Slug", name: "slug", widget: "string" }
+        hint: "Optional. Leave empty to auto-fill from the same category."
+
+      - label: "Body"
+        name: "body"
+        widget: "markdown"
+        hint: "Use H2 for main sections and H3 for products. Component shortcodes are documented in README.md."
+
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "reference"
+        label: "Writing Reference (read only)"
+        file: "src/content/reference.md"
+        fields:
+          - { label: "Notes", name: "body", widget: "markdown" }

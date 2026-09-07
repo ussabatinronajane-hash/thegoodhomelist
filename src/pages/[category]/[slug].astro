@@ -1,0 +1,125 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import AffiliateDisclosure from '../../components/AffiliateDisclosure.astro';
+import FAQ from '../../components/FAQ.astro';
+import PostCard from '../../components/PostCard.astro';
+import { CATEGORY_MAP, SITE } from '../../consts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { category: post.data.category, slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const cat = CATEGORY_MAP[post.data.category];
+const url = `${SITE.url}/${post.data.category}/${post.id}/`;
+
+const published = post.data.pubDate;
+const updated = post.data.updatedDate ?? post.data.pubDate;
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+// Related: explicit slugs first, then fill from the same category.
+const siblings = (
+  await getCollection('posts', ({ data }) => !data.draft && data.category === post.data.category)
+).filter((p) => p.id !== post.id);
+
+const explicit = siblings.filter((p) => post.data.related.includes(p.id));
+const related = [...explicit, ...siblings.filter((p) => !explicit.includes(p))].slice(0, 3);
+
+const schema: Record<string, any>[] = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: cat.name, item: `${SITE.url}/${cat.slug}/` },
+      { '@type': 'ListItem', position: 3, name: post.data.title, item: url },
+    ],
+  },
+  {
+    '@type': 'Article',
+    '@id': `${url}#article`,
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: published.toISOString(),
+    dateModified: updated.toISOString(),
+    author: {
+      '@type': 'Person',
+      name: post.data.author,
+      url: `${SITE.url}/about/`,
+    },
+    publisher: { '@id': `${SITE.url}/#organization` },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    inLanguage: 'en-US',
+  },
+];
+
+if (post.data.faqs.length > 0) {
+  schema.push({
+    '@type': 'FAQPage',
+    '@id': `${url}#faq`,
+    mainEntity: post.data.faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  });
+}
+---
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  publishedTime={published}
+  modifiedTime={updated}
+  schema={schema}
+>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: cat.name, href: `/${cat.slug}/` }, { label: post.data.title }]} />
+
+    <article class="read article-head">
+      <h1>{post.data.title}</h1>
+      <div class="article-meta">
+        <span>By {post.data.author}</span>
+        <span>Updated {fmt(updated)}</span>
+      </div>
+
+      {post.data.image && (
+        <img
+          src={post.data.image}
+          alt={post.data.imageAlt ?? post.data.title}
+          width="800"
+          height="450"
+          fetchpriority="high"
+          decoding="async"
+          style="border-radius:10px;margin:26px 0;width:100%;height:auto;"
+        />
+      )}
+
+      <div style="margin-top:26px;">
+        <AffiliateDisclosure />
+      </div>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <FAQ faqs={post.data.faqs} />
+    </article>
+
+    {related.length > 0 && (
+      <section class="related">
+        <div class="section-head"><h2>Related guides</h2></div>
+        <ul class="card-grid">
+          {related.map((p) => <PostCard post={p} />)}
+        </ul>
+      </section>
+    )}
+  </div>
+</BaseLayout>

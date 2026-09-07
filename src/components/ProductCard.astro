@@ -1,0 +1,57 @@
+---
+import { amazonUrl, AFFILIATE_ATTRS } from '../lib/amazon';
+
+export interface Props {
+  name: string;
+  /** Bare ASIN or a full Amazon URL. Gets tagged automatically. */
+  asin: string;
+  /** e.g. "Best Overall", "Best Budget", "Best for Small Spaces" */
+  badge?: string;
+  /** One or two sentences on who this is for and why it wins. */
+  verdict: string;
+  /** Image URL. Use Amazon SiteStripe image links or your own photo. */
+  image?: string;
+  imageAlt?: string;
+  pros?: string[];
+  cons?: string[];
+  ctaLabel?: string;
+}
+
+const {
+  name,
+  asin,
+  badge,
+  verdict,
+  image,
+  imageAlt,
+  pros = [],
+  cons = [],
+  ctaLabel = 'Check price on Amazon',
+} = Astro.props;
+
+const href = amazonUrl(asin);
+---
+<div class="product">
+  <div class="product-top">
+    {image && (
+      <div class="product-img">
+        <img src={image} alt={imageAlt ?? name} loading="lazy" width="168" height="168" />
+      </div>
+    )}
+    <div class="product-body">
+      {badge && <span class="product-badge">{badge}</span>}
+      <h3>{name}</h3>
+      <p class="product-verdict">{verdict}</p>
+
+      {(pros.length > 0 || cons.length > 0) && (
+        <ul class="product-specs">
+          {pros.map((p) => <li>{p}</li>)}
+          {cons.map((c) => <li class="con">{c}</li>)}
+        </ul>
+      )}
+
+      <a href={href} class="btn" {...AFFILIATE_ATTRS}>{ctaLabel}</a>
+      <p class="btn-note">Price and availability change often. We link out so you always see the current one.</p>
+    </div>
+  </div>
+</div>

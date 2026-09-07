@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../consts';
+---
+<BaseLayout
+  title="Affiliate Disclosure"
+  description={`How ${SITE.name} earns money through affiliate links, what that means for you, and why it does not affect our recommendations.`}
+>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: 'Affiliate Disclosure' }]} />
+    <article class="read prose">
+      <h1>Affiliate Disclosure</h1>
+      <p class="muted">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+      <h2>The short version</h2>
+      <p>
+        {SITE.name} earns money through affiliate links. When you click a product link on this
+        site and buy something, we may receive a commission. You pay the same price either way.
+      </p>
+
+      <h2>Amazon Associates</h2>
+      <p>
+        {SITE.name} is a participant in the Amazon Services LLC Associates Program, an affiliate
+        advertising program designed to provide a means for sites to earn advertising fees by
+        advertising and linking to Amazon.com.
+      </p>
+      <p>
+        As an Amazon Associate, we earn from qualifying purchases.
+      </p>
+      <p>
+        Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates. Product
+        prices and availability shown on this site are accurate as of the date and time indicated
+        and are subject to change. Any price and availability information displayed on Amazon at
+        the time of purchase is what applies to your purchase.
+      </p>
+
+      <h2>Other affiliate programs</h2>
+      <p>
+        We may also participate in other affiliate programs from time to time. The same rules
+        apply to all of them: disclosure on the page, no influence on rankings.
+      </p>
+
+      <h2>How this affects what we recommend</h2>
+      <p>
+        It does not. Commission rates are not a ranking factor, and no brand can pay for a
+        placement, a rating, or a mention. Where a cheaper product is the right answer for most
+        people, our guides say so, even when the more expensive option would earn more.
+      </p>
+      <p>
+        Our full process is documented in the <a href="/editorial-policy/">editorial policy</a>.
+      </p>
+
+      <h2>Where disclosures appear</h2>
+      <p>
+        A disclosure appears near the top of every page that contains affiliate links, before
+        the first link, as required by the United States Federal Trade Commission guidelines on
+        endorsements and by the Amazon Associates Operating Agreement.
+      </p>
+
+      <h2>Questions</h2>
+      <p>
+        If anything here is unclear, <a href="/contact/">get in touch</a> and we will explain it.
+      </p>
+    </article>
+  </div>
+</BaseLayout>

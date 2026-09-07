@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../consts';
+
+const schema = [
+  {
+    '@type': 'AboutPage',
+    name: `About ${SITE.name}`,
+    url: `${SITE.url}/about/`,
+    mainEntity: {
+      '@type': 'Person',
+      name: SITE.author,
+      jobTitle: 'Founder and Editor',
+      url: `${SITE.url}/about/`,
+    },
+  },
+];
+---
+<BaseLayout
+  title={`About ${SITE.name}`}
+  description={`Who runs ${SITE.name}, how the guides get written, and why you can trust the picks. Independent reviews with no sponsored placements.`}
+  schema={schema}
+>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: 'About' }]} />
+    <article class="read prose">
+      <h1>About {SITE.name}</h1>
+
+      <p class="muted" style="font-size:1.08rem;">
+        {SITE.name} is an independent site about the products that make a home work better.
+        No sponsored placements, no pay-to-rank, no filler.
+      </p>
+
+      <h2>Who writes this</h2>
+      <p>
+        Hi, I am {SITE.author}. I have spent the last several years working in search and
+        content, and a good chunk of that time inside the smart home space specifically,
+        writing about connectivity hardware and IoT devices for a US brand. That work meant
+        reading a lot of spec sheets, a lot of support tickets, and a lot of one-star reviews.
+      </p>
+      <p>
+        That is where this site came from. Most product roundups are assembled by someone who
+        has never touched the thing they are ranking. You can tell, because the guide never
+        mentions the annoying detail you only find out in week three. I would rather write the
+        version that does.
+      </p>
+
+      <h2>What you will find here</h2>
+      <p>
+        Buying guides and comparisons across five areas: smart home, kitchen and dining,
+        home and living, patio and garden, and tools and home improvement. Every guide is
+        built to answer one question honestly: which of these should you actually buy, and
+        who should skip it.
+      </p>
+
+      <h2>How this site makes money</h2>
+      <p>
+        Through affiliate links, mainly Amazon. If you buy something after clicking one, I earn
+        a small commission and you pay exactly the same price. That is the entire business model.
+      </p>
+      <p>
+        Nobody pays for a placement here and no brand gets to review a draft before it goes live.
+        If a product is the best one for the job, it gets the top spot. If the budget option is
+        good enough for most people, the guide says so, even though the expensive one would pay
+        more. You can read the full <a href="/affiliate-disclosure/">affiliate disclosure</a> and
+        the <a href="/editorial-policy/">testing and editorial policy</a>.
+      </p>
+
+      <h2>Corrections</h2>
+      <p>
+        Products change, prices move, and sometimes I get something wrong. If you spot an error
+        or a recommendation that has aged badly, <a href="/contact/">tell me</a> and I will fix
+        the page and note the update date.
+      </p>
+    </article>
+  </div>
+</BaseLayout>

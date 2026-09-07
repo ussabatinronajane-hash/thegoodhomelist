@@ -1,0 +1,45 @@
+---
+import { SITE, CATEGORIES } from '../consts';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h3>{SITE.name}</h3>
+        <p style="margin:0;max-width:30ch;">{SITE.tagline}. Independent reviews and buying guides, written by one person who actually uses this stuff.</p>
+      </div>
+      <div>
+        <h3>Categories</h3>
+        <ul>
+          {CATEGORIES.map((c) => (
+            <li><a href={`/${c.slug}/`}>{c.name}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h3>Site</h3>
+        <ul>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/editorial-policy/">How We Test</a></li>
+          <li><a href="/rss.xml">RSS</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="/affiliate-disclosure/">Affiliate Disclosure</a></li>
+          <li><a href="/privacy-policy/">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p style="margin:0 0 8px;">
+        As an Amazon Associate, {SITE.name} earns from qualifying purchases. Prices and availability
+        are accurate as of the date shown and are subject to change.
+      </p>
+      <p style="margin:0;">&copy; {year} {SITE.name}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

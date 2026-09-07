@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /contact-success/
+
+# Block Amazon affiliate link crawling waste
+Disallow: /*?tag=
+
+Sitemap: https://worthbuyinghome.com/sitemap-index.xml

@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../consts';
+
+const schema = [
+  {
+    '@type': 'ContactPage',
+    name: `Contact ${SITE.name}`,
+    url: `${SITE.url}/contact/`,
+  },
+];
+---
+<BaseLayout
+  title={`Contact ${SITE.name}`}
+  description={`Get in touch with ${SITE.name} about a correction, a product suggestion, or a question about one of our buying guides.`}
+  schema={schema}
+>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: 'Contact' }]} />
+    <article class="read prose">
+      <h1>Contact</h1>
+      <p class="muted" style="font-size:1.06rem;">
+        Corrections, product suggestions, or a question a guide did not answer. All of it is
+        welcome. I read everything and reply to most of it.
+      </p>
+
+      <!--
+        This form is handled by Netlify Forms. It works automatically once the site is
+        deployed to Netlify, with no backend and no third-party service.
+        Submissions appear under Forms in your Netlify dashboard.
+      -->
+      <form
+        name="contact"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        action="/contact-success/"
+        style="margin-top:32px;"
+      >
+        <input type="hidden" name="form-name" value="contact" />
+        <p hidden><label>Leave this empty: <input name="bot-field" /></label></p>
+
+        <p style="margin-bottom:18px;">
+          <label for="name" style="display:block;font-weight:650;margin-bottom:6px;">Your name</label>
+          <input id="name" name="name" type="text" required
+            style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:8px;font-size:1rem;font-family:inherit;" />
+        </p>
+
+        <p style="margin-bottom:18px;">
+          <label for="email" style="display:block;font-weight:650;margin-bottom:6px;">Email</label>
+          <input id="email" name="email" type="email" required
+            style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:8px;font-size:1rem;font-family:inherit;" />
+        </p>
+
+        <p style="margin-bottom:18px;">
+          <label for="message" style="display:block;font-weight:650;margin-bottom:6px;">Message</label>
+          <textarea id="message" name="message" rows="6" required
+            style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:8px;font-size:1rem;font-family:inherit;resize:vertical;"></textarea>
+        </p>
+
+        <button type="submit" class="btn" style="border:0;cursor:pointer;font-family:inherit;">Send message</button>
+      </form>
+
+      <h2>Working with brands</h2>
+      <p>
+        We do not accept paid placements, sponsored posts, or link insertions, so please do not
+        send those pitches. If you make something in one of our categories and want it considered
+        for a guide, say what it does and why it is different. That gets read.
+      </p>
+    </article>
+  </div>
+</BaseLayout>
