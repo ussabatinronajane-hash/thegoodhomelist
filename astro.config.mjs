@@ -4,7 +4,7 @@ import mdx from '@astrojs/mdx';
 import { rehypeAmazonLinks, rehypeExternalLinks } from './src/lib/rehype-amazon-links.mjs';
 
 // Keep these two in sync with src/consts.ts
-const SITE_URL = 'https://thegoodhomelist.com';
+const SITE_URL = 'https://thegoodhomelist.online';
 const AMAZON_TAG = 'findsmarthome-20';
 
 export default defineConfig({

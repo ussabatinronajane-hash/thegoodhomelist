@@ -5,7 +5,7 @@
 
 export const SITE = {
   /** Change this to your real domain once you buy it. No trailing slash. */
-  url: 'https://thegoodhomelist.com',
+  url: 'https://thegoodhomelist.online',
   name: 'The Good Home List',
   tagline: 'Honest picks for a better home',
   /** Used in meta descriptions and the homepage intro. */

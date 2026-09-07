@@ -6,4 +6,4 @@ Disallow: /contact-success/
 # Block Amazon affiliate link crawling waste
 Disallow: /*?tag=
 
-Sitemap: https://thegoodhomelist.com/sitemap-index.xml
+Sitemap: https://thegoodhomelist.online/sitemap-index.xml
