@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" fill="#eef5f1"/>
+  <rect x="140" y="90" width="920" height="500" rx="12" fill="#fff" stroke="#c9ddd2" stroke-width="6"/>
+  <path d="M600 90 v130 a60 60 0 0 0 0 120 a60 60 0 0 1 0 120 v130" fill="none" stroke="#9db8ab" stroke-width="26" stroke-linecap="round"/>
+  <rect x="200" y="400" width="300" height="80" rx="8" fill="#1c6b4a" opacity="0.85"/>
+  <rect x="200" y="300" width="180" height="80" rx="8" fill="#1c6b4a" opacity="0.55"/>
+  <rect x="720" y="360" width="280" height="120" rx="8" fill="#1c6b4a" opacity="0.7"/>
+  <rect x="720" y="230" width="280" height="110" rx="8" fill="#1c6b4a" opacity="0.4"/>
+  <text x="600" y="640" font-family="system-ui,sans-serif" font-size="30" fill="#4a5563" text-anchor="middle">Placeholder: replace with your own photo</text>
+</svg>

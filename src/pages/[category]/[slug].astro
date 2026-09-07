@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AffiliateDisclosure from '../../components/AffiliateDisclosure.astro';
 import FAQ from '../../components/FAQ.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
 import PostCard from '../../components/PostCard.astro';
 import { CATEGORY_MAP, SITE } from '../../consts';
 
@@ -16,7 +17,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const cat = CATEGORY_MAP[post.data.category];
 const url = `${SITE.url}/${post.data.category}/${post.id}/`;
 
@@ -105,6 +106,8 @@ if (post.data.faqs.length > 0) {
       <div style="margin-top:26px;">
         <AffiliateDisclosure />
       </div>
+
+      <TableOfContents headings={headings} />
 
       <div class="prose">
         <Content />

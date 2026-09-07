@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" fill="#eef5f1"/>
+  <rect x="120" y="120" width="960" height="440" rx="14" fill="#fff" stroke="#c9ddd2" stroke-width="6"/>
+  <line x1="360" y1="120" x2="360" y2="560" stroke="#9db8ab" stroke-width="10"/>
+  <line x1="600" y1="120" x2="600" y2="560" stroke="#9db8ab" stroke-width="10"/>
+  <line x1="840" y1="120" x2="840" y2="560" stroke="#9db8ab" stroke-width="10"/>
+  <rect x="170" y="200" width="140" height="26" rx="13" fill="#1c6b4a" opacity="0.8"/>
+  <rect x="170" y="250" width="140" height="26" rx="13" fill="#1c6b4a" opacity="0.6"/>
+  <rect x="410" y="200" width="140" height="26" rx="13" fill="#1c6b4a" opacity="0.7"/>
+  <rect x="650" y="200" width="140" height="26" rx="13" fill="#1c6b4a" opacity="0.5"/>
+  <rect x="890" y="200" width="140" height="26" rx="13" fill="#1c6b4a" opacity="0.4"/>
+  <text x="600" y="630" font-family="system-ui,sans-serif" font-size="30" fill="#4a5563" text-anchor="middle">Placeholder: replace with your own photo</text>
+</svg>

@@ -1,0 +1,49 @@
+---
+export interface Props {
+  /** Astro's `headings` from render(). */
+  headings: { depth: number; slug: string; text: string }[];
+  minHeadings?: number;
+}
+
+const { headings, minHeadings = 4 } = Astro.props;
+
+// Only H2s. H3s make the list too noisy to scan, which defeats the purpose.
+const items = headings.filter((h) => h.depth === 2);
+const show = items.length >= minHeadings;
+---
+{show && (
+  <nav class="toc" aria-labelledby="toc-heading">
+    <h2 id="toc-heading">What is in this guide</h2>
+    <ol>
+      {items.map((h) => (
+        <li><a href={`#${h.slug}`}>{h.text}</a></li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .toc {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 0 0 32px;
+  }
+  .toc h2 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-faint);
+    margin: 0 0 12px;
+    padding: 0;
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 1.2em;
+    font-size: 0.95rem;
+  }
+  .toc li { margin-bottom: 6px; }
+  .toc a { color: var(--ink-soft); text-decoration: none; }
+  .toc a:hover { color: var(--brand); text-decoration: underline; }
+</style>

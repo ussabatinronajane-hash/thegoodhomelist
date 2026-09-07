@@ -30,8 +30,15 @@ const {
 const canonical = new URL(path, SITE.url).href;
 const ogImage = image ? new URL(image, SITE.url).href : new URL('/og-default.png', SITE.url).href;
 
-// Title tag: append the brand unless the title already carries it.
-const fullTitle = title.includes(SITE.name) ? title : `${title} | ${SITE.name}`;
+// Title tag. Google truncates around 60 characters, so the brand suffix is only
+// worth adding when it fits. A truncated brand helps nobody, and losing the end
+// of the actual title costs clicks. Long titles ship without the suffix.
+const SUFFIX = ` | ${SITE.name}`;
+const MAX_TITLE = 60;
+const fullTitle =
+  title.includes(SITE.name) || title.length + SUFFIX.length > MAX_TITLE
+    ? title
+    : title + SUFFIX;
 
 const graph = [
   {
