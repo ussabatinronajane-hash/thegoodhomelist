@@ -37,5 +37,26 @@ const path = Astro.url.pathname;
     </main>
     <Footer />
     <SourceAttribution />
+    <!--
+      Netlify Identity widget.
+
+      Invite and password-recovery emails send people to the site root with a
+      token in the URL fragment, not to /admin/. Without this script on every
+      page, that token lands somewhere that cannot handle it and the button
+      appears to do nothing. This catches the token wherever it lands and
+      forwards the user to the CMS after login.
+    -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" is:inline></script>
+    <script is:inline>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('init', function (user) {
+          if (!user) {
+            window.netlifyIdentity.on('login', function () {
+              document.location.href = '/admin/';
+            });
+          }
+        });
+      }
+    </script>
   </body>
 </html>
