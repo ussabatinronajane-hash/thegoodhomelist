@@ -4,6 +4,7 @@ description: "A practical guide to buying cast iron: what size to get, why pre-s
 excerpt: "Cast iron is the rare pan that gets better with age, but only if you buy the right size and surface finish. Here is how to pick one you will still be using in thirty years."
 primaryKeyword: "how to choose a cast iron skillet"
 category: "kitchen"
+subcategory: "cookware"
 pubDate: 2026-09-03
 featured: true
 draft: true
