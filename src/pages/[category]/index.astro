@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { CATEGORIES, SITE } from '../../consts';
+import { CATEGORIES, SITE, SUBCATEGORIES } from '../../consts';
 
 export async function getStaticPaths() {
   return CATEGORIES.map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
@@ -14,6 +14,11 @@ const { cat } = Astro.props;
 const posts = (
   await getCollection('posts', ({ data }) => !data.draft && data.category === cat.slug)
 ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Subcategory chips, shown only for topics that already have a guide. This is
+// also how subcategories stay reachable on mobile, where the dropdown is hidden.
+const usedSubs = new Set(posts.map((p) => p.data.subcategory).filter(Boolean));
+const subs = (SUBCATEGORIES[cat.slug] ?? []).filter((s) => usedSubs.has(s.slug));
 
 const schema = [
   {
@@ -38,6 +43,14 @@ const schema = [
       <h1>{cat.heading}</h1>
       <p class="muted" style="font-size:1.06rem;">{cat.intro}</p>
     </div>
+
+    {subs.length > 0 && (
+      <ul class="subnav">
+        {subs.map((s) => (
+          <li><a href={`/${cat.slug}/${s.slug}/`}>{s.name}</a></li>
+        ))}
+      </ul>
+    )}
 
     {posts.length > 0 ? (
       <ul class="card-grid">

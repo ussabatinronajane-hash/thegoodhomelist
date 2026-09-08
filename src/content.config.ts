@@ -17,6 +17,12 @@ const posts = defineCollection({
       /** The primary keyword this post targets. Used for internal reporting. */
       primaryKeyword: z.string().optional(),
       category: z.enum(categorySlugs),
+      /**
+       * Optional. Puts the guide in a dropdown subcategory and creates a
+       * listing page for it. Must match a slug in SUBCATEGORIES in consts.ts.
+       * Leave blank and the guide still appears in its category hub.
+       */
+      subcategory: z.string().optional(),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       /** Path under /public, e.g. "/images/best-smart-plugs.webp" */

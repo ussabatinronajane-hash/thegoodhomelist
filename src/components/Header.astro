@@ -1,16 +1,68 @@
 ---
-import { SITE, NAV } from '../consts';
+import { getCollection } from 'astro:content';
+import { CATEGORIES, SUBCATEGORIES } from '../consts';
+
 const path = Astro.url.pathname;
+
+// Only show subcategories that actually contain a published guide. The menu
+// fills out as the site grows instead of advertising empty pages on day one.
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const used = new Set(
+  posts.filter((p) => p.data.subcategory).map((p) => `${p.data.category}/${p.data.subcategory}`)
+);
+
+const menu = CATEGORIES.map((cat) => {
+  const live = (SUBCATEGORIES[cat.slug] ?? []).filter((s) => used.has(`${cat.slug}/${s.slug}`));
+  // Group into columns, preserving the order groups first appear.
+  const groups: { name: string; items: typeof live }[] = [];
+  for (const s of live) {
+    let g = groups.find((x) => x.name === s.group);
+    if (!g) groups.push((g = { name: s.group, items: [] }));
+    g.items.push(s);
+  }
+  return { cat, groups, hasMenu: live.length > 0 };
+});
 ---
 <header class="site-header">
   <div class="wrap header-inner">
     <a href="/" class="logo">The Good <span>Home List</span></a>
+
     <nav class="nav" aria-label="Main">
-      {NAV.map((item) => (
-        <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
-          {item.label}
-        </a>
-      ))}
+      <ul class="nav-list">
+        {menu.map(({ cat, groups, hasMenu }) => (
+          <li class={hasMenu ? 'has-menu' : ''}>
+            <a
+              href={`/${cat.slug}/`}
+              aria-current={path.startsWith(`/${cat.slug}/`) ? 'page' : undefined}
+              aria-haspopup={hasMenu ? 'true' : undefined}
+            >
+              {cat.name}
+              {hasMenu && <span class="caret" aria-hidden="true"></span>}
+            </a>
+
+            {hasMenu && (
+              <div class="mega">
+                <div class="mega-inner">
+                  {groups.map((g) => (
+                    <div class="mega-col">
+                      <h2>{g.name}</h2>
+                      <ul>
+                        {g.items.map((s) => (
+                          <li><a href={`/${cat.slug}/${s.slug}/`}>{s.name}</a></li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                  <div class="mega-col mega-all">
+                    <a href={`/${cat.slug}/`} class="all-link">All {cat.name} &rarr;</a>
+                    <p>{cat.intro.split('.')[0]}.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
     </nav>
   </div>
 </header>

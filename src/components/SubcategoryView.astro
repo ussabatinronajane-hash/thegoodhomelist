@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import PostCard from './PostCard.astro';
+import { SITE, SUBCATEGORIES } from '../consts';
+
+export interface Props {
+  cat: any;
+  sub: any;
+  posts: any[];
+}
+
+const { cat, sub, posts } = Astro.props;
+const url = `${SITE.url}/${cat.slug}/${sub.slug}/`;
+
+// Sibling subcategories that also have guides, for lateral navigation.
+const siblings = (SUBCATEGORIES[cat.slug] ?? []).filter((s) => s.slug !== sub.slug);
+
+const schema = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: cat.name, item: `${SITE.url}/${cat.slug}/` },
+      { '@type': 'ListItem', position: 3, name: sub.name, item: url },
+    ],
+  },
+  {
+    '@type': 'CollectionPage',
+    '@id': `${url}#collection`,
+    name: sub.heading,
+    description: sub.description,
+    url,
+    isPartOf: { '@id': `${SITE.url}/#website` },
+  },
+];
+---
+<BaseLayout title={sub.heading} description={sub.description} schema={schema}>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: cat.name, href: `/${cat.slug}/` }, { label: sub.name }]} />
+
+    <div class="read" style="margin-bottom:30px;">
+      <h1>{sub.heading}</h1>
+      <p class="muted" style="font-size:1.06rem;">{sub.description}</p>
+    </div>
+
+    {siblings.length > 0 && (
+      <ul class="subnav">
+        <li><a href={`/${cat.slug}/`}>All {cat.name}</a></li>
+        {siblings.map((s) => (
+          <li><a href={`/${cat.slug}/${s.slug}/`}>{s.name}</a></li>
+        ))}
+      </ul>
+    )}
+
+    {posts.length > 0 ? (
+      <ul class="card-grid">
+        {posts.map((p) => <PostCard post={p} />)}
+      </ul>
+    ) : (
+      <p class="muted">Guides for this topic are on the way.</p>
+    )}
+  </div>
+</BaseLayout>

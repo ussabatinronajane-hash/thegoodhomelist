@@ -74,12 +74,90 @@ li { margin-bottom: 0.4em; }
   color: var(--ink); text-decoration: none; white-space: nowrap;
 }
 .logo span { color: var(--brand); }
-.nav { display: flex; gap: 20px; flex-wrap: wrap; margin-left: auto; }
-.nav a {
-  color: var(--ink-soft); text-decoration: none; font-size: 0.93rem; font-weight: 500;
-  padding: 4px 0; border-bottom: 2px solid transparent;
+.nav { margin-left: auto; }
+.nav-list {
+  display: flex; gap: 22px; flex-wrap: wrap;
+  list-style: none; margin: 0; padding: 0;
 }
-.nav a:hover, .nav a[aria-current='page'] { color: var(--brand); border-bottom-color: var(--brand); }
+.nav-list > li { position: relative; margin: 0; }
+.nav-list > li > a {
+  display: inline-flex; align-items: center; gap: 5px;
+  color: var(--ink-soft); text-decoration: none; font-size: 0.93rem; font-weight: 500;
+  padding: 21px 0; border-bottom: 2px solid transparent;
+}
+.nav-list > li > a:hover,
+.nav-list > li > a[aria-current='page'] { color: var(--brand); border-bottom-color: var(--brand); }
+
+.caret {
+  width: 0; height: 0;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-top: 4px solid currentColor;
+  opacity: 0.55;
+  transition: transform 0.15s;
+}
+.has-menu:hover .caret, .has-menu:focus-within .caret { transform: rotate(180deg); opacity: 1; }
+
+/* ---------- Mega menu ---------- */
+.mega {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(-6px);
+  z-index: 60; padding-top: 2px;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+.has-menu:hover .mega,
+.has-menu:focus-within .mega {
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.mega-inner {
+  display: flex; gap: 34px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 34px rgba(20, 24, 29, 0.11);
+  padding: 24px 28px;
+  min-width: max-content;
+}
+.mega-col { min-width: 148px; }
+.mega-col h2 {
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-faint); font-weight: 700; margin: 0 0 11px;
+}
+.mega-col ul { list-style: none; margin: 0; padding: 0; }
+.mega-col li { margin-bottom: 7px; }
+.mega-col li a {
+  color: var(--ink); text-decoration: none; font-size: 0.92rem;
+  display: block; padding: 1px 0;
+}
+.mega-col li a:hover { color: var(--brand); }
+
+.mega-all {
+  border-left: 1px solid var(--line);
+  padding-left: 30px; max-width: 210px;
+}
+.mega-all .all-link {
+  font-weight: 650; font-size: 0.93rem; color: var(--brand); text-decoration: none;
+  display: block; margin-bottom: 8px;
+}
+.mega-all .all-link:hover { text-decoration: underline; }
+.mega-all p { font-size: 0.85rem; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mega { transition: none; }
+  .caret { transition: none; }
+}
+
+/* ---------- Subcategory chips on hub pages ---------- */
+.subnav { list-style: none; display: flex; flex-wrap: wrap; gap: 9px; padding: 0; margin: 0 0 34px; }
+.subnav a {
+  display: inline-block; padding: 7px 15px;
+  border: 1px solid var(--line); border-radius: 100px;
+  font-size: 0.89rem; color: var(--ink-soft); text-decoration: none;
+  background: var(--bg);
+}
+.subnav a:hover { border-color: var(--brand); color: var(--brand); }
+.subnav a[aria-current='page'] { background: var(--brand); border-color: var(--brand); color: #fff; }
 
 /* ---------- Footer ---------- */
 .site-footer {
@@ -227,7 +305,11 @@ li { margin-bottom: 0.4em; }
 @media (max-width: 640px) {
   body { font-size: 16px; }
   .header-inner { min-height: 56px; gap: 12px; }
-  .nav { gap: 14px; width: 100%; margin-left: 0; overflow-x: auto; padding-bottom: 4px; }
+  .nav { width: 100%; margin-left: 0; overflow-x: auto; padding-bottom: 4px; }
+  .nav-list { gap: 16px; flex-wrap: nowrap; }
+  .nav-list > li > a { padding: 10px 0; white-space: nowrap; }
+  .mega { display: none; }
+  .caret { display: none; }
   .hero { padding: 36px 0 28px; }
   .product-img { flex: 0 0 110px; }
 }
