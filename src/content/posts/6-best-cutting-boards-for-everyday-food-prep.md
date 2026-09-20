@@ -34,7 +34,6 @@ Product details and availability were checked on September 20, 2026. Prices can 
 6. **Best flexible mats:** [Dexas Heavy Duty Grippmat Set](https://link.amazon/B09WAozrW)
 
 ## Cutting board comparison
-
 <div style="width:100%;overflow-x:auto;margin:24px 0;border:1px solid #e2e8f0;border-radius:12px;">
 <table style="width:100%;min-width:900px;border-collapse:collapse;background:#ffffff;font-family:Arial,sans-serif;font-size:14px;line-height:1.5;">
 <thead style="background:#173f35;color:#ffffff;">
@@ -101,7 +100,8 @@ Product details and availability were checked on September 20, 2026. Prices can 
 </div>
 
 <p style="font-size:13px;color:#64748b;">
-<sup>
+<sup>*</sup> The Teakhaus product page contains conflicting size information. Confirm the exact dimensions before purchasing.
+</p>
 
 The Teakhaus page contains conflicting size text in its summary. Confirm the exact SKU dimensions with the retailer before publishing or purchasing.
 
