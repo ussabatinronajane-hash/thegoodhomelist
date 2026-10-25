@@ -10,7 +10,7 @@ public_folder: "/images"
 
 site_url: https://thegoodhomelist.online
 display_url: https://thegoodhomelist.online
-logo_url: https://thegoodhomelist.online/favicon.svg
+logo_url: https://thegoodhomelist.online/logo-mark-512.png
 
 collections:
   - name: "posts"

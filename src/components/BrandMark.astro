@@ -1,14 +1,15 @@
 ---
-// Sprout mark used beside the site name. `light` is for dark backgrounds, such as the footer.
-// Swap this file's contents when a final logo is supplied.
+// The Good Home List logo mark (house, checkmark and leaves). The master file is
+// docs/logo-original.webp; public/logo-mark.webp is a transparent, trimmed copy.
+// The mark is dark green, so on a dark background `light` puts it on a cream badge.
 export interface Props { light?: boolean }
 const { light = false } = Astro.props;
-const stem = light ? '#faecd6' : '#05341c';
-const leafA = '#6f8f32';
-const leafB = light ? '#faecd6' : '#05341c';
 ---
-<svg class="brand-mark" viewBox="0 0 48 56" aria-hidden="true" focusable="false">
-  <path d="M24 54C24 42 24 32 24 22" fill="none" stroke={stem} stroke-width="3" stroke-linecap="round"/>
-  <path d="M24 32C13 33 5 26 5 12c13-1 21 6 19 20z" fill={leafA}/>
-  <path d="M24 25C26 12 34 5 45 5c0 14-9 22-21 20z" fill={leafB}/>
-</svg>
+<img
+  class={light ? 'brand-mark brand-mark-badge' : 'brand-mark'}
+  src="/logo-mark.webp"
+  width="336"
+  height="275"
+  alt=""
+  decoding="async"
+/>

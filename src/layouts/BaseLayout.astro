@@ -3,11 +3,12 @@ import SEO from '../components/SEO.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SourceAttribution from '../components/SourceAttribution.astro';
-import '@fontsource-variable/lora';
-import '@fontsource-variable/open-sans';
+import '@fontsource-variable/source-serif-4';
+import '@fontsource-variable/source-serif-4/wght-italic.css';
+import '@fontsource-variable/source-sans-3';
 import '../styles/global.css';
-import lora from '@fontsource-variable/lora/files/lora-latin-wght-normal.woff2?url';
-import openSans from '@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2?url';
+import serif from '@fontsource-variable/source-serif-4/files/source-serif-4-latin-wght-normal.woff2?url';
+import sans from '@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2?url';
 
 export interface Props {
   title: string;
@@ -30,9 +31,11 @@ const path = Astro.url.pathname;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#05341c" />
     <script is:inline>document.documentElement.classList.add('js');</script>
-    <link rel="preload" as="font" type="font/woff2" href={openSans} crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href={lora} crossorigin />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" as="font" type="font/woff2" href={sans} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={serif} crossorigin />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="alternate" type="application/rss+xml" title="The Good Home List" href="/rss.xml" />
     <SEO {...props} path={path} />

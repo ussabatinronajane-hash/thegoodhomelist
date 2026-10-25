@@ -6,7 +6,7 @@ import Img from '../components/Img.astro';
 import LeafIcon from '../components/LeafIcon.astro';
 import SectionIcon from '../components/SectionIcon.astro';
 import PickRailCard from '../components/PickRailCard.astro';
-import { SITE, CATEGORY_MAP, MAIN_NAV, ABOUT_IMAGE } from '../consts';
+import { SITE, CATEGORY_MAP, MAIN_NAV, ABOUT_IMAGE, ABOUT_IMAGE_ALT } from '../consts';
 import { matchesRules } from '../lib/sections';
 import { TOP_PICKS } from '../data/top-picks';
 
@@ -26,7 +26,8 @@ const latest = all.slice(0, 4);
 
 const tiles = MAIN_NAV.map((n) => {
   const newest = n.rules ? all.find((p) => matchesRules(n.rules, p.data) && p.data.image) : undefined;
-  return { ...n, photo: n.image || newest?.data.image || '' };
+  // A photo set on the section wins. Otherwise use the newest guide's image, which is decorative.
+  return { ...n, photo: n.image || newest?.data.image || '', photoAlt: n.image ? (n.imageAlt ?? '') : '' };
 });
 
 const published = new Map(all.map((p) => [p.id, p]));
@@ -105,7 +106,7 @@ const sectionName = (p: any) => MAIN_NAV.find((n) => matchesRules(n.rules, p.dat
                   {t.icon === 'picks' && !t.photo ? (
                     <span class="picks-badge" aria-hidden="true"><span>Best<br />Picks</span></span>
                   ) : t.photo ? (
-                    <Img src={t.photo} alt="" width={320} height={240} sizes="(min-width: 1024px) 170px, 45vw" />
+                    <Img src={t.photo} alt={t.photoAlt} width={320} height={240} sizes="(min-width: 1024px) 170px, 45vw" />
                   ) : (
                     <span class="ph"><SectionIcon name={t.icon} /></span>
                   )}
@@ -155,7 +156,7 @@ const sectionName = (p: any) => MAIN_NAV.find((n) => matchesRules(n.rules, p.dat
     <section class="about" aria-labelledby="about-title">
       <div class="about-media">
         {ABOUT_IMAGE ? (
-          <Img src={ABOUT_IMAGE} alt="" width={900} height={600} sizes="(min-width: 900px) 50vw, 100vw" />
+          <Img src={ABOUT_IMAGE} alt={ABOUT_IMAGE_ALT} width={900} height={600} sizes="(min-width: 900px) 50vw, 100vw" />
         ) : (
           <div class="ph"><LeafIcon /></div>
         )}

@@ -36,14 +36,15 @@ export const UTILITY_LINKS = [
   { href: '/about/', label: 'About' },
   { href: '/contact/', label: 'Contact' },
   { href: '/privacy-policy/', label: 'Privacy Policy' },
-  { href: '/terms-and-conditions/', label: 'Terms of Use' },
+  { href: '/terms-and-conditions/', label: 'Terms and Conditions' },
 ];
 
 /**
  * Photo for the homepage About section, for example '/images/about-kitchen.jpg'.
  * Leave empty and a plain green panel is shown instead.
  */
-export const ABOUT_IMAGE = '';
+export const ABOUT_IMAGE = '/images/photo-about-kitchen.jpg';
+export const ABOUT_IMAGE_ALT = 'Bright kitchen with taupe cabinets, light wood countertops and wooden bar stools';
 
 /**
  * Amazon Associates tracking IDs.
@@ -318,8 +319,11 @@ export type NavItem = {
    * Optional photo for the homepage category tile, for example
    * '/images/cat-kitchen.jpg'. If empty, the tile uses the photo of the newest
    * published guide in that section, and a neutral icon tile when there is none.
+   * Photo credits are listed in docs/photo-credits.md.
    */
   image?: string;
+  /** Describes the photo above for screen readers. */
+  imageAlt?: string;
   /** Icon used on the homepage tile. */
   icon: 'kitchen' | 'decor' | 'organize' | 'garden' | 'smart' | 'picks';
   /** Which guides belong here. Omit for pages that are not a guide listing. */
@@ -328,10 +332,10 @@ export type NavItem = {
 
 /** Exactly six top-level items, in display order. */
 export const MAIN_NAV: NavItem[] = [
-  { name: 'Home & Kitchen', icon: 'kitchen', href: '/home-kitchen/', blurb: 'Kitchen gear, cookware and everyday home essentials.', rules: SECTIONS[0].rules },
-  { name: 'Home Décor', icon: 'decor', href: '/home-decor/', blurb: 'Wall art, accents and seasonal pieces for small spaces.', rules: SECTIONS[1].rules },
-  { name: 'Organization & Cleaning', icon: 'organize', href: '/organization-cleaning/', blurb: 'Storage and cleaning gear that fits and holds up.', rules: SECTIONS[2].rules },
-  { name: 'Garden & Patio', icon: 'garden', href: '/garden/', blurb: 'Outdoor gear built to survive a full season.', rules: [{ category: 'garden' }] },
-  { name: 'Smart Home', icon: 'smart', href: '/smart-home/', blurb: 'Smart devices that make the day easier, not busier.', rules: [{ category: 'smart-home' }] },
+  { name: 'Home & Kitchen', icon: 'kitchen', image: '/images/photo-home-kitchen-boards.jpg', imageAlt: 'Handmade wooden cutting boards in dark and light oak leaning against a white wall', href: '/home-kitchen/', blurb: 'Kitchen gear, cookware and everyday home essentials.', rules: SECTIONS[0].rules },
+  { name: 'Home Décor', icon: 'decor', image: '/images/photo-home-decor-living-room.jpg', imageAlt: 'Living room with a cream sofa, exposed wooden beams, hanging plants and a white fur rug', href: '/home-decor/', blurb: 'Wall art, accents and seasonal pieces for small spaces.', rules: SECTIONS[1].rules },
+  { name: 'Organization & Cleaning', icon: 'organize', image: '/images/photo-organization-baskets.jpg', imageAlt: 'Two woven storage baskets with linen liners on a white shelf above a drawer', href: '/organization-cleaning/', blurb: 'Storage and cleaning gear that fits and holds up.', rules: SECTIONS[2].rules },
+  { name: 'Garden & Patio', icon: 'garden', image: '/images/photo-garden-patio.jpg', imageAlt: 'Brick patio corner with a hanging egg chair, potted plants and a garden shed', href: '/garden/', blurb: 'Outdoor gear built to survive a full season.', rules: [{ category: 'garden' }] },
+  { name: 'Smart Home', icon: 'smart', image: '/images/photo-smart-home-speaker.jpg', imageAlt: 'Smart speaker with lit indicator dots on a rustic wooden shelf beside a potted plant', href: '/smart-home/', blurb: 'Smart devices that make the day easier, not busier.', rules: [{ category: 'smart-home' }] },
   { name: 'Best Picks', icon: 'picks', href: '/best-picks/', blurb: 'Our top product picks from every guide, in one place.' },
 ];
