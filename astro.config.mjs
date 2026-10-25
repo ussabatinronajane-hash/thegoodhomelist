@@ -5,7 +5,7 @@ import { rehypeAmazonLinks, rehypeExternalLinks } from './src/lib/rehype-amazon-
 
 // Keep these two in sync with src/consts.ts
 const SITE_URL = 'https://thegoodhomelist.online';
-const AMAZON_TAG = 'findsmarthome-20';
+const AMAZON_TAG = 'thegoodhomelist-20';
 
 export default defineConfig({
   site: SITE_URL,
@@ -13,9 +13,8 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/admin') && !page.includes('/contact-success'),
+      filter: (page) => !page.includes('/admin') && !page.includes('/contact-success') && !page.includes('/search/'),
       changefreq: 'weekly',
-      lastmod: new Date(),
     }),
   ],
   build: {

@@ -1,18 +1,22 @@
 ---
 import { getCollection } from 'astro:content';
-import { CATEGORIES, SUBCATEGORIES } from '../consts';
+import { MAIN_NAV, SITE, SOCIAL, UTILITY_LINKS } from '../consts';
+import { TOP_PICKS } from '../data/top-picks';
+import { liveSubcategories, matchesRules } from '../lib/sections';
+import BrandMark from './BrandMark.astro';
 
 const path = Astro.url.pathname;
 
-// Only show subcategories that actually contain a published guide. The menu
-// fills out as the site grows instead of advertising empty pages on day one.
-const posts = await getCollection('posts', ({ data }) => !data.draft);
-const used = new Set(
-  posts.filter((p) => p.data.subcategory).map((p) => `${p.data.category}/${p.data.subcategory}`)
+// Each dropdown only ever links to pages that exist. It lists the subcategories that
+// have a published guide. A section with none of those falls back to its newest
+// published guides, and a section with neither is a plain link to its landing page.
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
+const pickGuideIds = new Set(TOP_PICKS.map((p) => p.guide));
 
-const menu = CATEGORIES.map((cat) => {
-  const live = (SUBCATEGORIES[cat.slug] ?? []).filter((s) => used.has(`${cat.slug}/${s.slug}`));
+const menu = MAIN_NAV.map((item, i) => {
+  const live = liveSubcategories(item.rules, posts);
   // Group into columns, preserving the order groups first appear.
   const groups: { name: string; items: typeof live }[] = [];
   for (const s of live) {
@@ -20,42 +24,107 @@ const menu = CATEGORIES.map((cat) => {
     if (!g) groups.push((g = { name: s.group, items: [] }));
     g.items.push(s);
   }
-  return { cat, groups, hasMenu: live.length > 0 };
+  const guides = (
+    item.rules
+      ? posts.filter((p) => matchesRules(item.rules, p.data)).map((p) => ({ title: p.data.title, href: `/${p.data.category}/${p.id}/` }))
+      : posts.filter((p) => pickGuideIds.has(p.id)).map((p) => ({ title: p.data.title, href: `/best-picks/#g-${p.id}` }))
+  ).slice(0, 3);
+  const showGuides = groups.length === 0 && guides.length > 0;
+  return { ...item, id: `menu-${i}`, groups, guides, showGuides, hasMenu: groups.length > 0 || showGuides };
 });
+
+// Text links for now. Swap in icons when real profile URLs and a final icon set exist.
+const social = [
+  { label: 'Pinterest', url: SOCIAL.pinterest },
+  { label: 'Facebook', url: SOCIAL.facebook },
+  { label: 'Instagram', url: SOCIAL.instagram },
+  { label: 'TikTok', url: SOCIAL.tiktok },
+].filter((s) => s.url);
 ---
-<header class="site-header">
-  <div class="wrap header-inner">
-    <a href="/" class="logo">The Good <span>Home List</span></a>
+<div class="announce">
+  <div class="wrap announce-inner">
+    <p class="announce-tag">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 19C5 10 10 5 20 4c0 9-5 14-13 15z" fill="#6f8f32"/><path d="M5 19c3-5 6-8 10-10" stroke="#faecd6" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      {SITE.tagline}.
+    </p>
+    <nav class="announce-links" aria-label="Site information">
+      {UTILITY_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+      {social.map((s) => (
+        <a href={s.url} rel="noopener" target="_blank" aria-label={`${SITE.name} on ${s.label}`}>{s.label}</a>
+      ))}
+    </nav>
+  </div>
+</div>
 
-    <nav class="nav" aria-label="Main">
+<header class="site-header" id="site-header">
+  <div class="wrap brand-row">
+    <a href="/" class="brand" aria-label={`${SITE.name} home`}>
+      <BrandMark />
+      <span class="brand-text">
+        <span class="brand-name">{SITE.name}</span>
+        <span class="brand-tag">{SITE.logoLine}</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      Menu
+    </button>
+
+    <form class="search" role="search" action="/search/" method="get">
+      <label for="site-search" class="sr-only">Search buying guides</label>
+      <input id="site-search" type="search" name="q" placeholder="Search for home ideas, product reviews, and more..." autocomplete="off" enterkeyhint="search" />
+      <button type="submit" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </button>
+    </form>
+  </div>
+
+  <div class="nav-bar" id="site-nav">
+    <nav class="wrap" aria-label="Main">
       <ul class="nav-list">
-        {menu.map(({ cat, groups, hasMenu }) => (
-          <li class={hasMenu ? 'has-menu' : ''}>
-            <a
-              href={`/${cat.slug}/`}
-              aria-current={path.startsWith(`/${cat.slug}/`) ? 'page' : undefined}
-              aria-haspopup={hasMenu ? 'true' : undefined}
-            >
-              {cat.name}
-              {hasMenu && <span class="caret" aria-hidden="true"></span>}
-            </a>
+        {menu.map((item) => (
+          <li class={item.hasMenu ? 'has-menu' : ''}>
+            <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.name}</a>
 
-            {hasMenu && (
-              <div class="mega">
+            {item.hasMenu && (
+              <button
+                type="button"
+                class="menu-btn"
+                aria-expanded="false"
+                aria-controls={item.id}
+                aria-label={`Show ${item.name} menu`}
+              >
+                <span class="caret" aria-hidden="true"></span>
+              </button>
+            )}
+
+            {item.hasMenu && (
+              <div class="mega" id={item.id}>
                 <div class="mega-inner">
-                  {groups.map((g) => (
+                  {item.groups.map((g) => (
                     <div class="mega-col">
                       <h2>{g.name}</h2>
                       <ul>
                         {g.items.map((s) => (
-                          <li><a href={`/${cat.slug}/${s.slug}/`}>{s.name}</a></li>
+                          <li><a href={s.href}>{s.label}</a></li>
                         ))}
                       </ul>
                     </div>
                   ))}
+                  {item.showGuides && (
+                    <div class="mega-col">
+                      <h2>Latest Guides</h2>
+                      <ul>
+                        {item.guides.map((g) => (
+                          <li><a href={g.href}>{g.title}</a></li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   <div class="mega-col mega-all">
-                    <a href={`/${cat.slug}/`} class="all-link">All {cat.name} &rarr;</a>
-                    <p>{cat.intro.split('.')[0]}.</p>
+                    <a href={item.href} class="all-link">All {item.name} &rarr;</a>
+                    <p>{item.blurb}</p>
                   </div>
                 </div>
               </div>
@@ -66,3 +135,53 @@ const menu = CATEGORIES.map((cat) => {
     </nav>
   </div>
 </header>
+
+<script is:inline>
+  (function () {
+    var header = document.getElementById('site-header');
+    if (!header) return;
+
+    // Mobile menu
+    var toggle = header.querySelector('.nav-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        var open = header.classList.toggle('nav-open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    }
+
+    // Dropdowns: a button beside each link opens its menu. Hover also opens it
+    // for mouse users (CSS), but the button is the keyboard and screen reader path.
+    var buttons = header.querySelectorAll('.menu-btn');
+    function closeAll(except) {
+      buttons.forEach(function (b) {
+        if (b === except) return;
+        b.setAttribute('aria-expanded', 'false');
+        b.parentElement.classList.remove('open');
+      });
+    }
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var open = b.getAttribute('aria-expanded') !== 'true';
+        closeAll(b);
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+        b.parentElement.classList.toggle('open', open);
+      });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var openBtn = header.querySelector('.menu-btn[aria-expanded="true"]');
+      // Escape also dismisses a menu opened by hovering, until the pointer leaves the nav.
+      header.classList.add('hover-off');
+      if (openBtn) {
+        closeAll();
+        openBtn.focus();
+      }
+    });
+    var list = header.querySelector('.nav-list');
+    if (list) list.addEventListener('mouseleave', function () { header.classList.remove('hover-off'); });
+    document.addEventListener('click', function (e) {
+      if (!header.contains(e.target)) closeAll();
+    });
+  })();
+</script>

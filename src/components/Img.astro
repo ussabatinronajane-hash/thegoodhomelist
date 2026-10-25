@@ -1,0 +1,54 @@
+---
+// Responsive image for files in public/images.
+//
+// If scripts/optimize-images.mjs has produced WebP copies (it runs on every
+// `npm run build`), they are served through <picture> with a srcset so phones
+// download a small file. If not, for example under `npm run dev`, or for SVGs,
+// it renders a normal <img> pointing at the original. Content never needs to
+// change: frontmatter keeps pointing at the original upload.
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+
+export interface Props {
+  src: string;
+  alt: string;
+  /** Intrinsic size of the original, used to reserve space and avoid layout shift. */
+  width: number;
+  height: number;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  class?: string;
+  style?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  sizes = '100vw',
+  loading = 'lazy',
+  fetchpriority,
+  class: className,
+  style,
+} = Astro.props;
+
+const WIDTHS = [480, 800, 1200];
+const match = src.match(/^\/images\/([^/]+)\.(png|jpe?g)$/i);
+
+let srcset = '';
+if (match) {
+  const base = match[1];
+  const found = WIDTHS.filter((w) => existsSync(path.join(process.cwd(), 'public/images/_opt', `${base}-${w}.webp`)));
+  srcset = found.map((w) => `/images/_opt/${base}-${w}.webp ${w}w`).join(', ');
+}
+---
+{srcset ? (
+  <picture>
+    <source type="image/webp" srcset={srcset} sizes={sizes} />
+    <img src={src} alt={alt} width={width} height={height} loading={loading} decoding="async" fetchpriority={fetchpriority} class={className} style={style} />
+  </picture>
+) : (
+  <img src={src} alt={alt} width={width} height={height} loading={loading} decoding="async" fetchpriority={fetchpriority} class={className} style={style} />
+)}

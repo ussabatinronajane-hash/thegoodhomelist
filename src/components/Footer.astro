@@ -1,24 +1,28 @@
 ---
-import { SITE, CATEGORIES } from '../consts';
+import { SITE, MAIN_NAV } from '../consts';
+import BrandMark from './BrandMark.astro';
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <h3>{SITE.name}</h3>
-        <p style="margin:0;max-width:30ch;">{SITE.tagline}. Independent reviews and buying guides, written by one person who actually uses this stuff.</p>
+        <a href="/" class="footer-brand">
+          <BrandMark light />
+          <span class="brand-name">{SITE.name}</span>
+        </a>
+        <p class="footer-about">{SITE.tagline}. Independent, researched buying guides with clear disclosure and no paid placements.</p>
       </div>
       <div>
         <h3>Categories</h3>
         <ul>
-          {CATEGORIES.map((c) => (
-            <li><a href={`/${c.slug}/`}>{c.name}</a></li>
+          {MAIN_NAV.map((n) => (
+            <li><a href={n.href}>{n.name}</a></li>
           ))}
         </ul>
       </div>
       <div>
-        <h3>Site</h3>
+        <h3>The Site</h3>
         <ul>
           <li><a href="/about/">About</a></li>
           <li><a href="/contact/">Contact</a></li>
@@ -41,14 +45,14 @@ const year = new Date().getFullYear();
         Amazon requires this sentence word for word, on every page carrying
         affiliate links. Do not reword it or substitute the site name.
       -->
-      <p style="margin:0 0 8px;">
+      <p>
         As an Amazon Associate, I earn from qualifying purchases. {SITE.name} is a participant in
         the Amazon Services LLC Associates Program, an affiliate advertising program designed to
         provide a means for sites to earn advertising fees by advertising and linking to
         Amazon.com. Prices and availability are accurate as of the date shown and are subject to
         change.
       </p>
-      <p style="margin:0;">&copy; {year} {SITE.name}. All rights reserved.</p>
+      <p>&copy; {year} {SITE.name}. All rights reserved.</p>
     </div>
   </div>
 </footer>

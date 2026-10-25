@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { CATEGORIES } from '../consts';
+import { MAIN_NAV } from '../consts';
 ---
 <BaseLayout title="Page not found" description="That page does not exist." noindex={true}>
   <div class="wrap">
-    <article class="read prose" style="padding-top:60px;">
-      <h1>That page does not exist</h1>
-      <p class="muted">The link may be old, or the page may have moved. Try one of these instead.</p>
+    <article class="read prose page-top">
+      <h1>That Page Does Not Exist</h1>
+      <p class="lede">The link may be old, or the page may have moved. Search for what you were after, or try one of these.</p>
       <ul>
-        {CATEGORIES.map((c) => <li><a href={`/${c.slug}/`}>{c.name}</a></li>)}
+        {MAIN_NAV.map((n) => <li><a href={n.href}>{n.name}</a></li>)}
         <li><a href="/">Homepage</a></li>
       </ul>
     </article>

@@ -19,7 +19,7 @@ const { columns, rows, caption } = Astro.props;
 ---
 <div class="compare-scroll">
   <table class="compare">
-    {caption && <caption class="muted" style="text-align:left;padding-bottom:10px;font-size:0.88rem;">{caption}</caption>}
+    {caption && <caption>{caption}</caption>}
     <thead>
       <tr>
         <th scope="col">Product</th>
@@ -31,7 +31,7 @@ const { columns, rows, caption } = Astro.props;
       {rows.map((row) => (
         <tr>
           <th scope="row" class={row.best ? 'pick' : ''}>
-            {row.name}{row.best && <span class="muted" style="font-weight:400;"> (top pick)</span>}
+            {row.name}{row.best && <span class="muted"> (top pick)</span>}
           </th>
           {row.values.map((v) => <td>{v}</td>)}
           <td>

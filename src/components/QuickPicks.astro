@@ -1,0 +1,32 @@
+---
+// "Our quick picks" list for the top of an .mdx guide.
+//
+//   <QuickPicks items={[
+//     { label: 'Best overall', name: 'OXO Good Grips 2-Piece Set', anchor: 'oxo-good-grips', note: 'Fits most kitchens.' },
+//     { label: 'Best budget', name: 'Example Board', asin: 'B0XXXXXXXX' },
+//   ]} />
+//
+// `anchor` jumps to that product's section in the guide (the heading id).
+// `asin` (or a full Amazon URL) adds a tagged affiliate link. Use whichever the
+// guide has; both can be given. Only describe what the guide itself supports.
+import { amazonUrl, AFFILIATE_ATTRS } from '../lib/amazon';
+
+export interface Props {
+  items: { label: string; name: string; note?: string; anchor?: string; asin?: string }[];
+}
+const { items } = Astro.props;
+---
+<ol class="quick-picks">
+  {items.map((it) => (
+    <li>
+      <span class="quick-label">{it.label}</span>
+      <span class="quick-name">
+        {it.anchor ? <a href={`#${it.anchor}`}>{it.name}</a> : it.name}
+      </span>
+      {it.note && <span class="quick-note">{it.note}</span>}
+      {it.asin && (
+        <a class="quick-buy" href={amazonUrl(it.asin)} {...AFFILIATE_ATTRS}>Check price<span class="sr-only"> for {it.name} on Amazon (affiliate link)</span></a>
+      )}
+    </li>
+  ))}
+</ol>

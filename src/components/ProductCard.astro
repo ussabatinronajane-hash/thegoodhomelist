@@ -1,5 +1,7 @@
 ---
 import { amazonUrl, AFFILIATE_ATTRS } from '../lib/amazon';
+import Img from './Img.astro';
+import ProsCons from './ProsCons.astro';
 
 export interface Props {
   name: string;
@@ -15,6 +17,8 @@ export interface Props {
   pros?: string[];
   cons?: string[];
   ctaLabel?: string;
+  /** What the pros and cons are based on, shown under them. */
+  basis?: string;
 }
 
 const {
@@ -27,6 +31,7 @@ const {
   pros = [],
   cons = [],
   ctaLabel = 'Check price on Amazon',
+  basis,
 } = Astro.props;
 
 const href = amazonUrl(asin);
@@ -35,7 +40,7 @@ const href = amazonUrl(asin);
   <div class="product-top">
     {image && (
       <div class="product-img">
-        <img src={image} alt={imageAlt ?? name} loading="lazy" width="168" height="168" />
+        <Img src={image} alt={imageAlt ?? name} width={168} height={168} sizes="168px" />
       </div>
     )}
     <div class="product-body">
@@ -43,14 +48,10 @@ const href = amazonUrl(asin);
       <h3>{name}</h3>
       <p class="product-verdict">{verdict}</p>
 
-      {(pros.length > 0 || cons.length > 0) && (
-        <ul class="product-specs">
-          {pros.map((p) => <li>{p}</li>)}
-          {cons.map((c) => <li class="con">{c}</li>)}
-        </ul>
-      )}
+      <slot />
+      <ProsCons pros={pros} cons={cons} basis={basis} />
 
-      <a href={href} class="btn" {...AFFILIATE_ATTRS}>{ctaLabel}</a>
+      <a href={href} class="btn" {...AFFILIATE_ATTRS}>{ctaLabel}<span class="sr-only">: {name} (affiliate link)</span></a>
       <p class="btn-note">Price and availability change often. We link out so you always see the current one.</p>
     </div>
   </div>

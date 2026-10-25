@@ -7,15 +7,44 @@ export const SITE = {
   /** Change this to your real domain once you buy it. No trailing slash. */
   url: 'https://thegoodhomelist.online',
   name: 'The Good Home List',
-  tagline: 'Honest picks for a better home',
+  /** Brand tagline, without the trailing full stop. Templates add punctuation. */
+  tagline: 'Practical, stylish finds for a home that works beautifully',
   /** Used in meta descriptions and the homepage intro. */
   description:
-    'Hand-tested picks and honest buying guides for smart home tech, kitchen gear, home essentials, outdoor living and tools.',
+    'Researched buying guides, comparisons and product picks for renters, first-time homeowners and small spaces. Practical, stylish finds for a home that works.',
+  /** Small line under the logo. */
+  logoLine: 'Practical finds. A more beautiful home.',
   author: 'Rona Jane Sabatin',
   locale: 'en_US',
   /** Twitter/X handle for cards. Leave blank if you do not have one. */
   social: '',
 } as const;
+
+/**
+ * Social profiles shown as icons in the top bar. An empty string hides that icon,
+ * so no dead links ever ship. Fill these in with the full profile URLs.
+ */
+export const SOCIAL = {
+  pinterest: '',
+  facebook: '',
+  instagram: '',
+  tiktok: '',
+} as const;
+
+/** Small links on the right of the top bar. */
+export const UTILITY_LINKS = [
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
+  { href: '/privacy-policy/', label: 'Privacy Policy' },
+  { href: '/terms-and-conditions/', label: 'Terms and Conditions' },
+];
+
+/**
+ * Photo for the homepage About section, for example '/images/about-kitchen.jpg'.
+ * Leave empty and a plain green panel is shown instead.
+ */
+export const ABOUT_IMAGE = '/images/photo-about-kitchen.jpg';
+export const ABOUT_IMAGE_ALT = 'Bright kitchen with taupe cabinets, light wood countertops and wooden bar stools';
 
 /**
  * Amazon Associates tracking IDs.
@@ -25,7 +54,7 @@ export const SITE = {
  * dashboard shows which traffic source actually earns. If a visitor has
  * JavaScript off, the link still works and still pays, just under SITE_TAG.
  */
-export const AMAZON_TAG = 'findsmarthome-20';
+export const AMAZON_TAG = 'thegoodhomelist-20';
 
 /** Applied when document.referrer is Pinterest. */
 export const PINTEREST_TAG = 'worthbuyingbyrona-20';
@@ -56,7 +85,7 @@ export const CATEGORIES: Category[] = [
     name: 'Smart Home',
     heading: 'Smart Home Guides and Product Picks',
     description:
-      'Tested smart home picks and setup guides. Compare smart plugs, hubs, sensors, cameras and more before you buy.',
+      'Smart home picks and setup guides. Compare smart plugs, hubs, sensors, cameras and more before you buy.',
     intro:
       'Smart home gear should make your day easier, not add another app to manage. These guides cover what actually works, what to skip, and how to set it up without a headache.',
   },
@@ -74,14 +103,14 @@ export const CATEGORIES: Category[] = [
     name: 'Home & Living',
     heading: 'Home and Living Essentials',
     description:
-      'Practical picks for everyday living. Storage, cleaning, comfort and organization products tested for real homes.',
+      'Practical picks for everyday living. Storage, cleaning, comfort and organization products chosen for real homes.',
     intro:
       'The unglamorous stuff that makes a home run well. Storage, cleaning, organization and comfort picks chosen for durability over looks.',
   },
   {
     slug: 'garden',
-    name: 'Patio, Lawn & Garden',
-    heading: 'Patio, Lawn and Garden Picks',
+    name: 'Garden & Patio',
+    heading: 'Garden and Patio Picks',
     description:
       'Outdoor living guides. Compare patio furniture, grills, lawn care tools and garden gear built to survive real weather.',
     intro:
@@ -123,14 +152,14 @@ export type Subcategory = {
 export const SUBCATEGORIES: Record<string, Subcategory[]> = {
   'smart-home': [
     { slug: 'smart-lighting', name: 'Smart Home Lighting', group: 'Devices', heading: 'Smart Lighting Guides', description: 'Smart bulbs, strips and switches compared on app quality, colour accuracy and whether they survive a wall switch.' },
-    { slug: 'plugs-and-outlets', name: 'Plugs and Outlets', group: 'Devices', heading: 'Smart Plugs and Outlets', description: 'Smart plugs and outlets tested on load rating, size and the thing that matters most: reconnecting after an outage.' },
+    { slug: 'plugs-and-outlets', name: 'Plugs and Outlets', group: 'Devices', heading: 'Smart Plugs and Outlets', description: 'Smart plugs and outlets compared on load rating, size and the thing that matters most: reconnecting after an outage.' },
     { slug: 'voice-assistants-and-hubs', name: 'Voice Assistants and Hubs', group: 'Devices', heading: 'Voice Assistants and Smart Home Hubs', description: 'Hubs and speakers compared on local control, protocol support and what still works when the internet drops.' },
     { slug: 'alexa-compatible', name: 'Alexa Compatible', group: 'Devices', heading: 'Alexa Compatible Smart Home Devices', description: 'Devices that work properly with Alexa, and the setup steps the box does not mention.' },
     { slug: 'smart-locks-and-entry', name: 'Smart Locks and Entry', group: 'Security', heading: 'Smart Locks and Entry Guides', description: 'Smart locks and keypads for renters and owners, including the failure modes that leave you outside.' },
     { slug: 'security-cameras', name: 'Security Cameras and Systems', group: 'Security', heading: 'Home Security Camera Guides', description: 'Indoor and outdoor cameras compared on subscription cost, local storage and real night performance.' },
     { slug: 'detectors-and-sensors', name: 'Detectors and Sensors', group: 'Security', heading: 'Smart Detectors and Sensors', description: 'Motion, contact, water and smoke sensors that catch problems early rather than after the damage.' },
     { slug: 'heating-and-cooling', name: 'Heating and Cooling', group: 'Home & Comfort', heading: 'Smart Heating and Cooling', description: 'Thermostats, fans and climate control that actually lower a bill rather than just showing you one.' },
-    { slug: 'vacuums-and-mops', name: 'Vacuums and Mops', group: 'Home & Comfort', heading: 'Robot Vacuums and Mops', description: 'Robot vacuums and mops tested on real floors, pet hair and the maintenance nobody mentions.' },
+    { slug: 'vacuums-and-mops', name: 'Vacuums and Mops', group: 'Home & Comfort', heading: 'Robot Vacuums and Mops', description: 'Robot vacuums and mops compared on floors, pet hair and the maintenance nobody mentions.' },
     { slug: 'smart-kitchen', name: 'Kitchen', group: 'Home & Comfort', heading: 'Smart Kitchen Devices', description: 'Connected kitchen gear that earns its counter space, and the gadgets that do not.' },
     { slug: 'home-entertainment', name: 'Home Entertainment', group: 'Home & Comfort', heading: 'Smart Home Entertainment', description: 'Streaming devices, speakers and TV gear compared without the spec-sheet theatre.' },
     { slug: 'wifi-and-networking', name: 'WIFI and Networking', group: 'More', heading: 'Wi-Fi and Home Networking', description: 'Routers, mesh systems and network gear for homes where the far bedroom never has signal.' },
@@ -160,7 +189,7 @@ export const SUBCATEGORIES: Record<string, Subcategory[]> = {
     { slug: 'wall-decor', name: 'Wall Décor', group: 'Decor', heading: 'Wall Decor Guides', description: 'Art, mirrors and wall fittings, including how to hang them so they stay up.' },
     { slug: 'seasonal-decor', name: 'Seasonal Décor', group: 'Decor', heading: 'Seasonal Decor Guides', description: 'Holiday and seasonal decor worth storing and bringing out again next year.' },
     { slug: 'party-supplies', name: 'Party Supplies', group: 'Decor', heading: 'Party Supply Guides', description: 'Hosting and party supplies for gatherings at home, without the landfill afterwards.' },
-    { slug: 'cleaning-supplies', name: 'Cleaning Supplies', group: 'Cleaning & Care', heading: 'Cleaning Supply Guides', description: 'Cleaning products and tools tested on real mess rather than staged spills.' },
+    { slug: 'cleaning-supplies', name: 'Cleaning Supplies', group: 'Cleaning & Care', heading: 'Cleaning Supply Guides', description: 'Cleaning products and tools compared on real mess rather than staged spills.' },
     { slug: 'vacuums-and-floor-care', name: 'Vacuums & Floor Care', group: 'Cleaning & Care', heading: 'Vacuum and Floor Care Guides', description: 'Vacuums, mops and floor tools compared on suction, filters and running costs.' },
     { slug: 'irons-and-steamers', name: 'Irons & Steamers', group: 'Cleaning & Care', heading: 'Iron and Steamer Guides', description: 'Irons and garment steamers judged on heat-up time, water capacity and leaks.' },
     { slug: 'air-quality', name: 'Heating, Cooling & Air Quality', group: 'Comfort & Storage', heading: 'Heating, Cooling and Air Quality Guides', description: 'Heaters, fans, purifiers and humidifiers for homes with real temperature problems.' },
@@ -214,5 +243,99 @@ export const CATEGORY_MAP = Object.fromEntries(
   CATEGORIES.map((c) => [c.slug, c])
 ) as Record<string, Category>;
 
-/** Main navigation. */
-export const NAV = CATEGORIES.map((c) => ({ href: `/${c.slug}/`, label: c.name }));
+// ---------------------------------------------------------------------------
+// BRAND SECTIONS AND MAIN NAVIGATION
+//
+// The six top-level navigation items. The original category URLs (/kitchen/,
+// /home/, /tools/, /garden/, /smart-home/) are untouched and still work; the
+// brand sections are a layer on top that groups guides by category and
+// subcategory. A guide appears in a section when it matches any of its rules.
+//
+//   rule { category }                   every guide in that category
+//   rule { category, subs: [...] }      only guides filed under those subcategories
+//
+// Each entry in SECTIONS gets its own landing page at /<slug>/. Garden & Patio
+// and Smart Home reuse the existing category hubs, so they are not listed there.
+// ---------------------------------------------------------------------------
+
+export type Rule = { category: string; subs?: string[] };
+
+export type Section = Category & {
+  rules: Rule[];
+};
+
+export const SECTIONS: Section[] = [
+  {
+    slug: 'home-kitchen',
+    name: 'Home & Kitchen',
+    heading: 'Home and Kitchen Buying Guides',
+    description:
+      'Buying guides for kitchen gear, cookware, dining and everyday home essentials, researched for real kitchens and small spaces.',
+    intro:
+      'Counter space and cabinet space are limited, so every pick here has to earn its place. These guides cover kitchen gear, dining essentials and everyday home basics, with plain advice on what to buy and what to skip.',
+    rules: [
+      { category: 'kitchen' },
+      { category: 'home', subs: ['bath', 'bedding', 'furniture', 'kids-home'] },
+    ],
+  },
+  {
+    slug: 'home-decor',
+    name: 'Home Décor',
+    heading: 'Home Décor Ideas and Buying Guides',
+    description:
+      'Practical home décor guides for renters and small spaces: wall art, accents and seasonal pieces that look good without a renovation.',
+    intro:
+      'Good décor should make a home feel finished without a renovation or a lost deposit. These guides focus on pieces that suit small spaces and rentals, and on how to hang and style them well.',
+    rules: [{ category: 'home', subs: ['home-decor', 'wall-decor', 'seasonal-decor', 'party-supplies'] }],
+  },
+  {
+    slug: 'organization-cleaning',
+    name: 'Organization & Cleaning',
+    heading: 'Organization and Cleaning Guides',
+    description:
+      'Storage, organization and cleaning guides for small homes: what to buy, how to measure, and how to keep a space easy to tidy.',
+    intro:
+      'A home that is easy to keep tidy works better every day. These guides cover storage, organizers and cleaning gear, with advice on measuring first so what you buy actually fits.',
+    rules: [
+      {
+        category: 'home',
+        subs: ['storage-and-organization', 'cleaning-supplies', 'vacuums-and-floor-care', 'irons-and-steamers'],
+      },
+      { category: 'kitchen', subs: ['kitchen-storage'] },
+      { category: 'tools', subs: ['tool-storage'] },
+      { category: 'smart-home', subs: ['vacuums-and-mops'] },
+    ],
+  },
+];
+
+export const SECTION_MAP = Object.fromEntries(SECTIONS.map((s) => [s.slug, s])) as Record<string, Section>;
+
+export type NavItem = {
+  name: string;
+  href: string;
+  /** Short line used on homepage tiles. */
+  blurb: string;
+  /**
+   * Optional photo for the homepage category tile, for example
+   * '/images/cat-kitchen.jpg'. If empty, the tile uses the photo of the newest
+   * published guide in that section, and a neutral icon tile when there is none.
+   * Photo credits are listed in docs/photo-credits.md.
+   */
+  image?: string;
+  /** Describes the photo above for screen readers. */
+  imageAlt?: string;
+  /** Icon used on the homepage tile. */
+  icon: 'kitchen' | 'decor' | 'organize' | 'garden' | 'smart' | 'picks';
+  /** Which guides belong here. Omit for pages that are not a guide listing. */
+  rules?: Rule[];
+};
+
+/** Exactly six top-level items, in display order. */
+export const MAIN_NAV: NavItem[] = [
+  { name: 'Home & Kitchen', icon: 'kitchen', image: '/images/photo-home-kitchen-boards.jpg', imageAlt: 'Handmade wooden cutting boards in dark and light oak leaning against a white wall', href: '/home-kitchen/', blurb: 'Kitchen gear, cookware and everyday home essentials.', rules: SECTIONS[0].rules },
+  { name: 'Home Décor', icon: 'decor', image: '/images/photo-home-decor-living-room.jpg', imageAlt: 'Living room with a cream sofa, exposed wooden beams, hanging plants and a white fur rug', href: '/home-decor/', blurb: 'Wall art, accents and seasonal pieces for small spaces.', rules: SECTIONS[1].rules },
+  { name: 'Organization & Cleaning', icon: 'organize', image: '/images/photo-organization-baskets.jpg', imageAlt: 'Two woven storage baskets with linen liners on a white shelf above a drawer', href: '/organization-cleaning/', blurb: 'Storage and cleaning gear that fits and holds up.', rules: SECTIONS[2].rules },
+  { name: 'Garden & Patio', icon: 'garden', image: '/images/photo-garden-patio.jpg', imageAlt: 'Brick patio corner with a hanging egg chair, potted plants and a garden shed', href: '/garden/', blurb: 'Outdoor gear built to survive a full season.', rules: [{ category: 'garden' }] },
+  { name: 'Smart Home', icon: 'smart', image: '/images/photo-smart-home-speaker.jpg', imageAlt: 'Smart speaker with lit indicator dots on a rustic wooden shelf beside a potted plant', href: '/smart-home/', blurb: 'Smart devices that make the day easier, not busier.', rules: [{ category: 'smart-home' }] },
+  { name: 'Best Picks', icon: 'picks', href: '/best-picks/', blurb: 'Our top product picks from every guide, in one place.' },
+];

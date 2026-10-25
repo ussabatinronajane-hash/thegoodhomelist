@@ -1,63 +1,73 @@
 ---
+// Serves two kinds of landing page from one route, because both live at /<slug>/:
+//
+//   /smart-home/, /garden/, /kitchen/, /home/, /tools/     original category hubs
+//   /home-kitchen/, /home-decor/, /organization-cleaning/  brand sections
+//
+// Original hub URLs are unchanged. The brand sections group guides by category
+// and subcategory (see SECTIONS in src/consts.ts) and never copy or move content.
+
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { CATEGORIES, SITE, SUBCATEGORIES } from '../../consts';
+import HubView from '../../components/HubView.astro';
+import { CATEGORIES, CATEGORY_MAP, SECTIONS, MAIN_NAV } from '../../consts';
+import { matchesRules, liveSubcategories } from '../../lib/sections';
 
 export async function getStaticPaths() {
-  return CATEGORIES.map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
+  const cats = CATEGORIES.map((c) => ({
+    params: { category: c.slug },
+    props: { page: c, rules: [{ category: c.slug }] },
+  }));
+  const sections = SECTIONS.map((s) => ({
+    params: { category: s.slug },
+    props: { page: s, rules: s.rules },
+  }));
+
+  // Fail the build if a section slug would shadow an original category.
+  const seen = new Set<string>();
+  for (const p of [...cats, ...sections]) {
+    if (seen.has(p.params.category)) {
+      throw new Error(`Duplicate landing page slug "/${p.params.category}/" in CATEGORIES and SECTIONS (src/consts.ts).`);
+    }
+    seen.add(p.params.category);
+  }
+  return [...cats, ...sections];
 }
 
-const { cat } = Astro.props;
+const { page, rules } = Astro.props;
+const href = `/${page.slug}/`;
 
-const posts = (
-  await getCollection('posts', ({ data }) => !data.draft && data.category === cat.slug)
-).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const all = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 
-// Subcategory chips, shown only for topics that already have a guide. This is
-// also how subcategories stay reachable on mobile, where the dropdown is hidden.
-const usedSubs = new Set(posts.map((p) => p.data.subcategory).filter(Boolean));
-const subs = (SUBCATEGORIES[cat.slug] ?? []).filter((s) => usedSubs.has(s.slug));
+const posts = all.filter((p) => matchesRules(rules, p.data));
+const subs = liveSubcategories(rules, posts).map((s) => ({ name: s.label, href: s.href }));
+const otherPosts = all.filter((p) => !posts.includes(p)).slice(0, 3);
 
-const schema = [
-  {
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
-      { '@type': 'ListItem', position: 2, name: cat.name, item: `${SITE.url}/${cat.slug}/` },
-    ],
-  },
-  {
-    '@type': 'CollectionPage',
-    name: cat.heading,
-    description: cat.description,
-    url: `${SITE.url}/${cat.slug}/`,
-  },
-];
+// Links to the other main sections, skipping any that would be an empty page.
+const related = MAIN_NAV.filter(
+  (n) => n.href !== href && (!n.rules || all.some((p) => matchesRules(n.rules, p.data)))
+).map((n) => ({ name: n.name, href: n.href }));
+
+// A brand section also points at the original category hubs it draws from, so
+// those pages stay reachable from the site now that they are not in the main menu.
+if (page.rules) {
+  for (const r of page.rules) {
+    const cat = CATEGORY_MAP[r.category];
+    if (cat && all.some((p) => p.data.category === cat.slug) && !related.some((x) => x.href === `/${cat.slug}/`)) {
+      related.push({ name: `${cat.name} Hub`, href: `/${cat.slug}/` });
+    }
+  }
+}
 ---
-<BaseLayout title={cat.heading} description={cat.description} schema={schema}>
-  <div class="wrap">
-    <Breadcrumbs items={[{ label: cat.name }]} />
-    <div class="read" style="margin-bottom:36px;">
-      <h1>{cat.heading}</h1>
-      <p class="muted" style="font-size:1.06rem;">{cat.intro}</p>
-    </div>
-
-    {subs.length > 0 && (
-      <ul class="subnav">
-        {subs.map((s) => (
-          <li><a href={`/${cat.slug}/${s.slug}/`}>{s.name}</a></li>
-        ))}
-      </ul>
-    )}
-
-    {posts.length > 0 ? (
-      <ul class="card-grid">
-        {posts.map((post) => <PostCard post={post} />)}
-      </ul>
-    ) : (
-      <p class="muted">Guides for this category are on the way.</p>
-    )}
-  </div>
-</BaseLayout>
+<HubView
+  name={page.name}
+  heading={page.heading}
+  description={page.description}
+  intro={page.intro}
+  href={href}
+  posts={posts}
+  subs={subs}
+  related={related}
+  otherPosts={otherPosts}
+/>

@@ -2,8 +2,9 @@
 
 An Amazon affiliate site built on Astro, deployed to Netlify, edited through Decap CMS.
 
-Static output, no database, no plugins to maintain. The whole site builds in about two seconds
-and the homepage ships around 24KB.
+Static output, no database, no plugins to maintain. A few small inline scripts handle the mobile
+menu, dropdowns, search, the contents box and the affiliate tag swap. No third-party script loads
+on a normal page view.
 
 ---
 
@@ -15,7 +16,7 @@ Already set. Both of your Associates tracking IDs are wired in:
 
 | Tag | Used when |
 |---|---|
-| `findsmarthome-20` | Default. Baked into every link at build time |
+| `thegoodhomelist-20` | Default. Baked into every link at build time |
 | `worthbuyingbyrona-20` | Swapped in when the visitor arrived from Pinterest |
 
 This means your Associates dashboard tells you which channel actually earns, rather than lumping
@@ -23,14 +24,14 @@ everything together. Pinterest traffic reports under one ID, Google and direct u
 
 The swap runs in `src/components/SourceAttribution.astro`. It reads `document.referrer` on the
 first page of a visit, stores the result in `sessionStorage`, and reapplies it as the visitor
-reads more guides. It is about 700 bytes and the only JavaScript on a content page. With
-JavaScript disabled, every link still carries `findsmarthome-20` and still pays.
+reads more guides. It is about 700 bytes. With
+JavaScript disabled, every link still carries `thegoodhomelist-20` and still pays.
 
 To change either tag, edit `AMAZON_TAG` and `PINTEREST_TAG` in `src/consts.ts`, and `AMAZON_TAG`
 in `astro.config.mjs`. It appears in both files because the config cannot import from TypeScript
 source at build time.
 
-Verified working: a direct visit and a visit from google.com both produce `findsmarthome-20`, and
+Verified working: a direct visit and a visit from google.com both produce `thegoodhomelist-20`, and
 a visit from pinterest.com produces `worthbuyingbyrona-20`, with
 `rel="nofollow sponsored noopener"` intact in all three cases.
 
@@ -164,6 +165,25 @@ import ComparisonTable from '../../components/ComparisonTable.astro';
 
 `asin` takes a bare ASIN or a full Amazon URL. Either way it gets tagged.
 
+More building blocks for `.mdx` guides, all in `src/components/`:
+
+```mdx
+import QuickPicks from '../../components/QuickPicks.astro';
+import ProsCons from '../../components/ProsCons.astro';
+import Callout from '../../components/Callout.astro';
+
+<QuickPicks items={[
+  { label: 'Best overall', name: 'Product name', anchor: 'heading-id-of-its-section', asin: 'B0XXXXXXXX', note: 'One line.' },
+]} />
+
+<ProsCons pros={['...']} cons={['...']} basis="Based on manufacturer specifications and published reviews." />
+
+<Callout title="What to check before you buy">Buying advice goes here.</Callout>
+```
+
+Only add `pros`/`cons` when the guide has evidence for them, and say what that evidence is in
+`basis`. Never describe a product as tested unless the guide documents real testing.
+
 ### FAQs
 
 Add them in the frontmatter (or the FAQ list in the CMS). They render as an accordion and
@@ -182,9 +202,11 @@ Google pulls for featured snippets.
 
 Drop them in `public/images/` (the CMS does this for you) and reference as `/images/name.webp`.
 
-Export at 1200x675 and compress before uploading. There is no image optimization pipeline here
-by design, because it keeps the build fast and the setup simple. Squoosh or the export settings
-in Canva handle it in one step.
+Upload the original. `npm run build` runs `scripts/optimize-images.mjs`, which writes resized WebP
+copies (480, 800 and 1200 pixels wide) to `public/images/_opt/`. That folder is git-ignored, so the
+repo only ever holds your originals. The `<Img>` component serves the WebP copies and falls back to
+the original if they do not exist. A 2 MB PNG becomes roughly 30 to 120 KB. Pictures placed inside a
+guide's body text are not resized, so keep those under about 300 KB.
 
 ---
 
@@ -212,16 +234,52 @@ You do not need a plugin for any of this. It is built into the templates.
 
 ---
 
-## 6. Adding a category later
+## 6. Navigation, categories and sections
 
-Edit the `CATEGORIES` array in `src/consts.ts`. Add an object with `slug`, `name`, `heading`,
-`description` and `intro`. The hub page, navigation, footer, sitemap and CMS dropdown all update
-from that one array.
+The site has two layers. Do not mix them up.
 
-Then add the matching option to the `category` field in `public/admin/config.yml`.
-
+**Original categories** (`CATEGORIES` in `src/consts.ts`): `smart-home`, `kitchen`, `home`,
+`garden`, `tools`. Every guide URL starts with one of these, for example
+`/kitchen/some-guide/`. Their hub pages (`/kitchen/`, `/home/`, `/tools/`...) still exist.
 **Do not change an existing slug after launch.** It changes every URL underneath it. If you must,
 add redirects in `netlify.toml` first.
+
+**Main navigation** (`MAIN_NAV` and `SECTIONS` in the same file): the six items in the menu.
+Each one says which categories and subcategories it gathers, using `rules`:
+
+| Menu item | Page | Gathers |
+|---|---|---|
+| Home & Kitchen | `/home-kitchen/` | all of `kitchen`, plus `home` bath, bedding, furniture, kids' |
+| Home Décor | `/home-decor/` | `home` décor, wall décor, seasonal décor, party supplies |
+| Organization & Cleaning | `/organization-cleaning/` | storage and cleaning subcategories across several categories |
+| Garden & Patio | `/garden/` | all of `garden` |
+| Smart Home | `/smart-home/` | all of `smart-home` |
+| Best Picks | `/best-picks/` | picks listed in `src/data/top-picks.ts` |
+
+A guide appears in a section when its `category` and `subcategory` match a rule. Set the
+**Subcategory** field in the CMS (or `subcategory:` in the frontmatter) so a guide lands in the
+right place. Dropdown menus list only subcategories that already have a published guide, and a
+section page with no guides is marked `noindex` until it has one.
+
+To change what a menu item gathers, edit its `rules`. To rename a menu item, change its `name`.
+Neither changes any URL.
+
+### Best Picks and the homepage "Top Picks"
+
+Both read `src/data/top-picks.ts`. Add an entry per product, pointing at its guide and the heading
+id inside it. Add an `asin` only after opening that Amazon page and confirming it is the product
+the guide describes. Without an `asin` the card links to the guide only.
+
+---
+
+## 6b. Build checks
+
+`npm run build` runs, in order: image optimization, `astro build`, a sitemap cleanup
+(`scripts/prune-sitemap.mjs`) and a site check (`scripts/check-site.mjs`). The check **fails the
+build** on broken internal links or `#anchors`, a missing or wrong canonical URL, structured data
+that does not parse, or a `noindex` page in the sitemap. Netlify then keeps the previous deploy
+live. Over-long titles and descriptions are printed as warnings. Run just the check on an existing
+build with `npm run check`.
 
 ---
 
@@ -242,7 +300,7 @@ The CMS admin does not work locally without extra setup. Edit files directly whe
 
 Before applying to Amazon Associates:
 
-- [x] Amazon tracking IDs set (findsmarthome-20 and worthbuyingbyrona-20)
+- [x] Amazon tracking IDs set (thegoodhomelist-20 and worthbuyingbyrona-20)
 - [ ] Domain set in all four places
 - [ ] Contact email updated in the privacy policy
 - [ ] About page rewritten in your own words (it is drafted, not final)
@@ -260,4 +318,4 @@ second is missing disclosure. Both are handled here as long as you publish real 
 
 ## Stack
 
-Astro 7 · Decap CMS 3 · Netlify · no runtime JavaScript on content pages
+Astro 7 · Decap CMS 3 · Netlify · Source Serif 4 and Source Sans 3 (self-hosted via Fontsource)

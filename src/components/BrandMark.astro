@@ -1,0 +1,15 @@
+---
+// The Good Home List logo mark (house, checkmark and leaves). The master file is
+// docs/logo-original.webp; public/logo-mark.webp is a transparent, trimmed copy.
+// The mark is dark green, so on a dark background `light` puts it on a cream badge.
+export interface Props { light?: boolean }
+const { light = false } = Astro.props;
+---
+<img
+  class={light ? 'brand-mark brand-mark-badge' : 'brand-mark'}
+  src="/logo-mark.webp"
+  width="336"
+  height="275"
+  alt=""
+  decoding="async"
+/>
