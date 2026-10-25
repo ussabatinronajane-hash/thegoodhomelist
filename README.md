@@ -318,4 +318,4 @@ second is missing disclosure. Both are handled here as long as you publish real 
 
 ## Stack
 
-Astro 7 · Decap CMS 3 · Netlify · Poppins and Open Sans (self-hosted via Fontsource)
+Astro 7 · Decap CMS 3 · Netlify · Lora and Open Sans (self-hosted via Fontsource)

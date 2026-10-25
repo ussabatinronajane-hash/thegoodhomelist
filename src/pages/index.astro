@@ -2,179 +2,203 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import LeadStory from '../components/LeadStory.astro';
-import LeafIcon from '../components/LeafIcon.astro';
 import Img from '../components/Img.astro';
-import TopPickCard from '../components/TopPickCard.astro';
-import { SITE, CATEGORY_MAP, MAIN_NAV } from '../consts';
+import LeafIcon from '../components/LeafIcon.astro';
+import SectionIcon from '../components/SectionIcon.astro';
+import PickRailCard from '../components/PickRailCard.astro';
+import { SITE, CATEGORY_MAP, MAIN_NAV, ABOUT_IMAGE } from '../consts';
 import { matchesRules } from '../lib/sections';
 import { TOP_PICKS } from '../data/top-picks';
 
+// Everything below comes from published guides. Nothing is invented, and a
+// section with nothing to show is left out instead of filled with filler.
 const all = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-// Lead story: the newest featured guide, falling back to the newest guide.
-const featured = all.filter((p) => p.data.featured);
-const lead = featured[0] ?? all[0];
+// Hero: the newest featured guide, falling back to the newest guide.
+const lead = all.find((p) => p.data.featured) ?? all[0];
+// The four smaller stories under the hero: featured guides first, then the newest.
 const rest = all.filter((p) => p !== lead);
-// Highlights: other featured guides first, then the newest of the rest.
-const side = [...rest.filter((p) => p.data.featured), ...rest.filter((p) => !p.data.featured)].slice(0, 3);
-const shown = new Set([lead, ...side]);
+const strip = [...rest.filter((p) => p.data.featured), ...rest.filter((p) => !p.data.featured)].slice(0, 4);
+// Latest guides: the four newest, even if they also appear above.
+const latest = all.slice(0, 4);
 
-const latest = all.filter((p) => !shown.has(p)).slice(0, 6);
-
-const tiles = MAIN_NAV.map((n) => ({
-  ...n,
-  count: n.rules ? all.filter((p) => matchesRules(n.rules, p.data)).length : null,
-}));
-
-// Home inspiration: guides about the house and garden that are not already on screen.
-const inspiration = all
-  .filter((p) => ['home', 'garden'].includes(p.data.category) && !shown.has(p))
-  .slice(0, 3);
+const tiles = MAIN_NAV.map((n) => {
+  const newest = n.rules ? all.find((p) => matchesRules(n.rules, p.data) && p.data.image) : undefined;
+  return { ...n, photo: n.image || newest?.data.image || '' };
+});
 
 const published = new Map(all.map((p) => [p.id, p]));
-// Homepage shows six picks, taken in turn from each guide so one guide does not fill the row.
+// Six picks, taken in turn from each guide so one guide does not fill the rail.
 const byGuide = new Map<string, typeof TOP_PICKS>();
 for (const p of TOP_PICKS.filter((p) => published.has(p.guide))) {
   byGuide.set(p.guide, [...(byGuide.get(p.guide) ?? []), p]);
 }
 const picks: typeof TOP_PICKS = [];
-for (let i = 0; picks.length < 6 && [...byGuide.values()].some((g) => g.length > i); i++) {
-  for (const g of byGuide.values()) if (g[i] && picks.length < 6) picks.push(g[i]);
+for (let i = 0; picks.length < 8 && [...byGuide.values()].some((g) => g.length > i); i++) {
+  for (const g of byGuide.values()) if (g[i] && picks.length < 8) picks.push(g[i]);
 }
 
 const hrefOf = (p: any) => `/${p.data.category}/${p.id}/`;
+const sectionName = (p: any) => MAIN_NAV.find((n) => matchesRules(n.rules, p.data))?.name ?? CATEGORY_MAP[p.data.category]?.name;
 ---
 <BaseLayout
   title={`${SITE.name} | Practical, Stylish Home Finds`}
   description={SITE.description}
 >
-  <section class="home-intro">
-    <div class="wrap">
-      <h1>Practical, Stylish Finds for a Home That Works Beautifully</h1>
-      <p>
-        Researched buying guides and comparisons for renters, first-time homeowners and anyone
-        making the most of a small space.
-      </p>
-    </div>
-  </section>
+  <div class="home">
+    <h1 class="sr-only">{SITE.name}: {SITE.tagline}</h1>
 
-  {lead && <LeadStory lead={lead} side={side} />}
+    {lead && (
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="wrap">
+          <div class="hero-copy">
+            <span class="eyebrow-caps">Featured Guide</span>
+            <h2 id="hero-title"><a href={hrefOf(lead)}>{lead.data.title}</a></h2>
+            <p>{lead.data.excerpt}</p>
+            <a href={hrefOf(lead)} class="btn btn-arrow">Read the Guide <span aria-hidden="true">&rarr;</span></a>
+          </div>
+        </div>
+        <div class="hero-media" aria-hidden="true">
+          {lead.data.image ? (
+            <Img src={lead.data.image} alt="" width={1200} height={800} sizes="(min-width: 1024px) 60vw, 100vw" loading="eager" fetchpriority="high" />
+          ) : (
+            <div class="ph"><LeafIcon /></div>
+          )}
+        </div>
+      </section>
+    )}
 
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head"><h2>Browse by Category</h2></div>
-      <ul class="tiles">
-        {tiles.map((t) => (
-          <li>
-            <a href={t.href} class="tile">
-              <strong>{t.name}</strong>
-              <span>{t.blurb}</span>
-              {t.count !== null && (
-                <span class="tile-count">
-                  {t.count > 0 ? `${t.count} ${t.count === 1 ? 'Guide' : 'Guides'}` : 'Guides Coming Soon'}
+    {strip.length > 0 && (
+      <section class="wrap strip-wrap" aria-label="More featured guides">
+        <ul class={`strip strip-${strip.length}`}>
+          {strip.map((p) => (
+            <li class="strip-item">
+              <a href={hrefOf(p)} class="strip-thumb" aria-hidden="true" tabindex="-1">
+                {p.data.image ? (
+                  <Img src={p.data.image} alt="" width={156} height={184} sizes="78px" />
+                ) : (
+                  <div class="ph"><LeafIcon /></div>
+                )}
+              </a>
+              <div>
+                <h3><a href={hrefOf(p)}>{p.data.title}</a></h3>
+                <p>{p.data.excerpt}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="wrap" aria-labelledby="browse-title">
+      <div class="panel">
+        <div class="panel-head">
+          <h2 id="browse-title">Browse by Category</h2>
+        </div>
+        <ul class="cat-tiles">
+          {tiles.map((t) => (
+            <li>
+              <a href={t.href} class="cat-tile">
+                <span class="cat-photo">
+                  {t.icon === 'picks' && !t.photo ? (
+                    <span class="picks-badge" aria-hidden="true"><span>Best<br />Picks</span></span>
+                  ) : t.photo ? (
+                    <Img src={t.photo} alt="" width={320} height={240} sizes="(min-width: 1024px) 170px, 45vw" />
+                  ) : (
+                    <span class="ph"><SectionIcon name={t.icon} /></span>
+                  )}
                 </span>
-              )}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
+                <span class="cat-label"><SectionIcon name={t.icon} />{t.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
 
-  {latest.length > 0 && (
-    <section class="section">
-      <div class="wrap">
-        <div class="section-head"><h2>Latest Buying Guides</h2></div>
-        <ul class="card-grid">
+    {latest.length > 0 && (
+      <section class="wrap home-section" aria-labelledby="latest-title">
+        <div class="section-head">
+          <h2 id="latest-title">Latest Buying Guides</h2>
+          <a class="view-all" href="/guides/">View All Guides <span aria-hidden="true">&rarr;</span></a>
+        </div>
+        <ul class="card-grid cols-4">
           {latest.map((post) => <PostCard post={post} />)}
         </ul>
-      </div>
-    </section>
-  )}
+      </section>
+    )}
 
-  {picks.length > 0 && (
-    <section class="band" aria-labelledby="picks-title">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="picks-title">Our Top Picks</h2>
-          <p>
-            Standout picks from our published guides. Each one links to the full write-up, so you
-            can see why it made the list and who should skip it. Buttons marked &ldquo;Check
-            Price&rdquo; are affiliate links.
-            <a href="/best-picks/">See all best picks</a>.
-          </p>
+    {picks.length > 0 && (
+      <section class="wrap home-section" aria-labelledby="picks-title">
+        <div class="panel picks-panel">
+          <div class="picks-intro">
+            <h2 id="picks-title">Our Top Picks</h2>
+            <p>
+              Standout picks from our published guides. Each one links to the full write-up.
+              &ldquo;Check Price&rdquo; buttons are affiliate links.
+            </p>
+            <a href="/best-picks/" class="btn btn-arrow">See All Top Picks <span aria-hidden="true">&rarr;</span></a>
+          </div>
+          <div class="rail-wrap">
+            <button class="rail-arrow rail-prev" type="button" aria-label="Previous picks" hidden>&lsaquo;</button>
+            <ul class="rail" tabindex="0" aria-label="Top picks">
+              {picks.map((p) => <PickRailCard pick={p} category={published.get(p.guide)!.data.category} />)}
+            </ul>
+            <button class="rail-arrow rail-next" type="button" aria-label="Next picks" hidden>&rsaquo;</button>
+          </div>
         </div>
-        <ul class="top-picks">
-          {picks.map((p) => <TopPickCard pick={p} category={published.get(p.guide)!.data.category} />)}
-        </ul>
-      </div>
-    </section>
-  )}
+      </section>
+    )}
 
-  {inspiration.length >= 2 && (
-    <section class="section" aria-labelledby="inspo-title">
-      <div class="wrap">
-        <div class="section-head">
-          <h2 id="inspo-title">Home Inspiration</h2>
-          <p>Ideas for organizing, refreshing and getting more from the space you have.</p>
-        </div>
-        <div class={`inspo inspo-${inspiration.length}`}>
-          {inspiration.map((p) => (
-            <a href={hrefOf(p)} class="inspo-item">
-              {p.data.image ? (
-                <Img src={p.data.image} alt="" width={600} height={750} sizes="(min-width: 1024px) 380px, 92vw" />
-              ) : (
-                <div class="ph"><LeafIcon /></div>
-              )}
-              <div class="inspo-cap">
-                <span>{CATEGORY_MAP[p.data.category]?.name}</span>
-                <strong>{p.data.title}</strong>
-              </div>
-            </a>
-          ))}
-        </div>
+    <section class="about" aria-labelledby="about-title">
+      <div class="about-media">
+        {ABOUT_IMAGE ? (
+          <Img src={ABOUT_IMAGE} alt="" width={900} height={600} sizes="(min-width: 900px) 50vw, 100vw" />
+        ) : (
+          <div class="ph"><LeafIcon /></div>
+        )}
       </div>
-    </section>
-  )}
-
-  <section class="band band-cream" aria-labelledby="about-title">
-    <div class="wrap about-grid">
-      <div>
-        <h2 id="about-title">About The Good Home List</h2>
+      <div class="about-copy">
+        <span class="eyebrow-caps">About {SITE.name}</span>
+        <h2 id="about-title">Practical, Stylish Finds for a Home That Works Beautifully.</h2>
         <p>
-          {SITE.name} helps renters, first-time homeowners and small-space dwellers find
-          practical, stylish products without wading through hundreds of near-identical listings.
-          Every guide is researched, compared and written to answer one question plainly: which
-          one should you buy, and who should skip it?
+          We share well-researched product recommendations, buying guides, and home ideas to help
+          you create a comfortable, organized, and beautiful home &mdash; without overspending.
         </p>
-        <p>
-          We earn a commission when you buy through some links, at no extra cost to you. That
-          never decides what makes a list.
-        </p>
-        <div class="about-actions">
-          <a href="/about/" class="btn">Read Our Story</a>
-          <a href="/editorial-policy/" class="btn btn-ghost">How We Choose Products</a>
-        </div>
-      </div>
-      <ul class="principles">
-        <li><strong>Researched, Not Sponsored</strong><span>No brand pays for a spot in a guide or sees a draft before it goes live.</span></li>
-        <li><strong>Honest About Limits</strong><span>If we have not tested a product ourselves, the guide says so.</span></li>
-        <li><strong>Clear Disclosure</strong><span>Affiliate links are marked on every page, with the full policy one click away.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  {all.length === 0 && (
-    <section class="section">
-      <div class="wrap read">
-        <p class="muted">
-          No guides published yet. Add your first guide in the admin panel at
-          <code>/admin</code> and it will appear here.
-        </p>
+        <a href="/about/" class="btn btn-arrow">Learn More About Us <span aria-hidden="true">&rarr;</span></a>
       </div>
     </section>
-  )}
+
+    {all.length === 0 && (
+      <section class="wrap home-section">
+        <p class="muted">No guides published yet. Add one in the admin panel at <code>/admin</code> and it will appear here.</p>
+      </section>
+    )}
+  </div>
+
+  <script is:inline>
+    // Arrows for the Top Picks rail. They stay hidden unless the cards overflow.
+    (function () {
+      var rail = document.querySelector('.rail');
+      if (!rail) return;
+      var prev = document.querySelector('.rail-prev');
+      var next = document.querySelector('.rail-next');
+      function update() {
+        var overflow = rail.scrollWidth > rail.clientWidth + 4;
+        prev.hidden = !overflow || rail.scrollLeft < 4;
+        next.hidden = !overflow || rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+      }
+      function step(dir) {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        rail.scrollBy({ left: dir * rail.clientWidth * 0.8, behavior: reduce ? 'auto' : 'smooth' });
+      }
+      prev.addEventListener('click', function () { step(-1); });
+      next.addEventListener('click', function () { step(1); });
+      rail.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+  </script>
 </BaseLayout>

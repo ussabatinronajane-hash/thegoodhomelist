@@ -12,11 +12,38 @@ export const SITE = {
   /** Used in meta descriptions and the homepage intro. */
   description:
     'Researched buying guides, comparisons and product picks for renters, first-time homeowners and small spaces. Practical, stylish finds for a home that works.',
+  /** Small line under the logo. */
+  logoLine: 'Practical finds. A more beautiful home.',
   author: 'Rona Jane Sabatin',
   locale: 'en_US',
   /** Twitter/X handle for cards. Leave blank if you do not have one. */
   social: '',
 } as const;
+
+/**
+ * Social profiles shown as icons in the top bar. An empty string hides that icon,
+ * so no dead links ever ship. Fill these in with the full profile URLs.
+ */
+export const SOCIAL = {
+  pinterest: '',
+  facebook: '',
+  instagram: '',
+  tiktok: '',
+} as const;
+
+/** Small links on the right of the top bar. */
+export const UTILITY_LINKS = [
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Contact' },
+  { href: '/privacy-policy/', label: 'Privacy Policy' },
+  { href: '/terms-and-conditions/', label: 'Terms of Use' },
+];
+
+/**
+ * Photo for the homepage About section, for example '/images/about-kitchen.jpg'.
+ * Leave empty and a plain green panel is shown instead.
+ */
+export const ABOUT_IMAGE = '';
 
 /**
  * Amazon Associates tracking IDs.
@@ -287,16 +314,24 @@ export type NavItem = {
   href: string;
   /** Short line used on homepage tiles. */
   blurb: string;
+  /**
+   * Optional photo for the homepage category tile, for example
+   * '/images/cat-kitchen.jpg'. If empty, the tile uses the photo of the newest
+   * published guide in that section, and a neutral icon tile when there is none.
+   */
+  image?: string;
+  /** Icon used on the homepage tile. */
+  icon: 'kitchen' | 'decor' | 'organize' | 'garden' | 'smart' | 'picks';
   /** Which guides belong here. Omit for pages that are not a guide listing. */
   rules?: Rule[];
 };
 
 /** Exactly six top-level items, in display order. */
 export const MAIN_NAV: NavItem[] = [
-  { name: 'Home & Kitchen', href: '/home-kitchen/', blurb: 'Kitchen gear, cookware and everyday home essentials.', rules: SECTIONS[0].rules },
-  { name: 'Home Décor', href: '/home-decor/', blurb: 'Wall art, accents and seasonal pieces for small spaces.', rules: SECTIONS[1].rules },
-  { name: 'Organization & Cleaning', href: '/organization-cleaning/', blurb: 'Storage and cleaning gear that fits and holds up.', rules: SECTIONS[2].rules },
-  { name: 'Garden & Patio', href: '/garden/', blurb: 'Outdoor gear built to survive a full season.', rules: [{ category: 'garden' }] },
-  { name: 'Smart Home', href: '/smart-home/', blurb: 'Smart devices that make the day easier, not busier.', rules: [{ category: 'smart-home' }] },
-  { name: 'Best Picks', href: '/best-picks/', blurb: 'Our top product picks from every guide, in one place.' },
+  { name: 'Home & Kitchen', icon: 'kitchen', href: '/home-kitchen/', blurb: 'Kitchen gear, cookware and everyday home essentials.', rules: SECTIONS[0].rules },
+  { name: 'Home Décor', icon: 'decor', href: '/home-decor/', blurb: 'Wall art, accents and seasonal pieces for small spaces.', rules: SECTIONS[1].rules },
+  { name: 'Organization & Cleaning', icon: 'organize', href: '/organization-cleaning/', blurb: 'Storage and cleaning gear that fits and holds up.', rules: SECTIONS[2].rules },
+  { name: 'Garden & Patio', icon: 'garden', href: '/garden/', blurb: 'Outdoor gear built to survive a full season.', rules: [{ category: 'garden' }] },
+  { name: 'Smart Home', icon: 'smart', href: '/smart-home/', blurb: 'Smart devices that make the day easier, not busier.', rules: [{ category: 'smart-home' }] },
+  { name: 'Best Picks', icon: 'picks', href: '/best-picks/', blurb: 'Our top product picks from every guide, in one place.' },
 ];

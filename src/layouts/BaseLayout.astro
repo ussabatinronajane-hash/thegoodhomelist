@@ -3,13 +3,10 @@ import SEO from '../components/SEO.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SourceAttribution from '../components/SourceAttribution.astro';
-import '@fontsource/poppins/500.css';
-import '@fontsource/poppins/600.css';
-import '@fontsource/poppins/700.css';
+import '@fontsource-variable/lora';
 import '@fontsource-variable/open-sans';
 import '../styles/global.css';
-import poppins600 from '@fontsource/poppins/files/poppins-latin-600-normal.woff2?url';
-import poppins700 from '@fontsource/poppins/files/poppins-latin-700-normal.woff2?url';
+import lora from '@fontsource-variable/lora/files/lora-latin-wght-normal.woff2?url';
 import openSans from '@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2?url';
 
 export interface Props {
@@ -34,8 +31,7 @@ const path = Astro.url.pathname;
     <meta name="theme-color" content="#05341c" />
     <script is:inline>document.documentElement.classList.add('js');</script>
     <link rel="preload" as="font" type="font/woff2" href={openSans} crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href={poppins600} crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href={poppins700} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={lora} crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="alternate" type="application/rss+xml" title="The Good Home List" href="/rss.xml" />

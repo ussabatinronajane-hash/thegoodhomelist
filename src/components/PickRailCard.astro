@@ -1,0 +1,26 @@
+---
+// Compact product card for the homepage "Our Top Picks" rail.
+// There are no product photos yet, so the picture area is a neutral tile.
+// A Check Price button appears only when the pick has a verified `asin`.
+import { amazonUrl, AFFILIATE_ATTRS } from '../lib/amazon';
+import type { TopPick } from '../data/top-picks';
+import LeafIcon from './LeafIcon.astro';
+
+export interface Props {
+  pick: TopPick;
+  category: string;
+}
+const { pick, category } = Astro.props;
+---
+<li class="rail-card">
+  <span class="rail-badge">{pick.badge}</span>
+  <a class="rail-img" href={`/${category}/${pick.guide}/#${pick.anchor}`} tabindex="-1" aria-hidden="true">
+    <div class="ph"><LeafIcon /></div>
+  </a>
+  <h3><a href={`/${category}/${pick.guide}/#${pick.anchor}`}>{pick.name}</a></h3>
+  {pick.asin ? (
+    <a class="rail-buy" href={amazonUrl(pick.asin)} {...AFFILIATE_ATTRS}>Check Price<span class="sr-only">: {pick.name} on Amazon (affiliate link)</span></a>
+  ) : (
+    <a class="rail-buy rail-buy-plain" href={`/${category}/${pick.guide}/#${pick.anchor}`}>Read the Review</a>
+  )}
+</li>

@@ -1,9 +1,14 @@
 ---
-// Simple house-with-checkmark mark, drawn from the existing favicon shapes.
+// Sprout mark used beside the site name. `light` is for dark backgrounds, such as the footer.
 // Swap this file's contents when a final logo is supplied.
+export interface Props { light?: boolean }
+const { light = false } = Astro.props;
+const stem = light ? '#faecd6' : '#05341c';
+const leafA = '#6f8f32';
+const leafB = light ? '#faecd6' : '#05341c';
 ---
-<svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-  <rect width="64" height="64" rx="14" fill="#05341c"/>
-  <path d="M16 27h32M16 27l4 21h24l4-21M16 27l6-11h20l6 11" fill="none" stroke="#faecd6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M25 34l5 6 10-11" fill="none" stroke="#6f8f32" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<svg class="brand-mark" viewBox="0 0 48 56" aria-hidden="true" focusable="false">
+  <path d="M24 54C24 42 24 32 24 22" fill="none" stroke={stem} stroke-width="3" stroke-linecap="round"/>
+  <path d="M24 32C13 33 5 26 5 12c13-1 21 6 19 20z" fill={leafA}/>
+  <path d="M24 25C26 12 34 5 45 5c0 14-9 22-21 20z" fill={leafB}/>
 </svg>

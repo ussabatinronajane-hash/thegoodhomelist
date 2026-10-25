@@ -1,15 +1,19 @@
 ---
 import { getCollection } from 'astro:content';
-import { MAIN_NAV, SITE } from '../consts';
-import { liveSubcategories } from '../lib/sections';
+import { MAIN_NAV, SITE, SOCIAL, UTILITY_LINKS } from '../consts';
+import { TOP_PICKS } from '../data/top-picks';
+import { liveSubcategories, matchesRules } from '../lib/sections';
 import BrandMark from './BrandMark.astro';
 
 const path = Astro.url.pathname;
 
-// Each dropdown lists only subcategories that already have a published guide, so
-// it never links to a page that does not exist. Items with no live subcategories
-// are plain links to their landing page.
-const posts = await getCollection('posts', ({ data }) => !data.draft);
+// Each dropdown only ever links to pages that exist. It lists the subcategories that
+// have a published guide. A section with none of those falls back to its newest
+// published guides, and a section with neither is a plain link to its landing page.
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const pickGuideIds = new Set(TOP_PICKS.map((p) => p.guide));
 
 const menu = MAIN_NAV.map((item, i) => {
   const live = liveSubcategories(item.rules, posts);
@@ -20,13 +24,35 @@ const menu = MAIN_NAV.map((item, i) => {
     if (!g) groups.push((g = { name: s.group, items: [] }));
     g.items.push(s);
   }
-  return { ...item, id: `menu-${i}`, groups, hasMenu: groups.length > 0 };
+  const guides = (
+    item.rules
+      ? posts.filter((p) => matchesRules(item.rules, p.data)).map((p) => ({ title: p.data.title, href: `/${p.data.category}/${p.id}/` }))
+      : posts.filter((p) => pickGuideIds.has(p.id)).map((p) => ({ title: p.data.title, href: `/best-picks/#g-${p.id}` }))
+  ).slice(0, 3);
+  const showGuides = groups.length === 0 && guides.length > 0;
+  return { ...item, id: `menu-${i}`, groups, guides, showGuides, hasMenu: groups.length > 0 || showGuides };
 });
+
+// Text links for now. Swap in icons when real profile URLs and a final icon set exist.
+const social = [
+  { label: 'Pinterest', url: SOCIAL.pinterest },
+  { label: 'Facebook', url: SOCIAL.facebook },
+  { label: 'Instagram', url: SOCIAL.instagram },
+  { label: 'TikTok', url: SOCIAL.tiktok },
+].filter((s) => s.url);
 ---
 <div class="announce">
-  <div class="wrap">
-    <p>Researched buying guides for a home that works beautifully.</p>
-    <a href="/editorial-policy/">How We Choose Products</a>
+  <div class="wrap announce-inner">
+    <p class="announce-tag">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 19C5 10 10 5 20 4c0 9-5 14-13 15z" fill="#6f8f32"/><path d="M5 19c3-5 6-8 10-10" stroke="#faecd6" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      {SITE.tagline}.
+    </p>
+    <nav class="announce-links" aria-label="Site information">
+      {UTILITY_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+      {social.map((s) => (
+        <a href={s.url} rel="noopener" target="_blank" aria-label={`${SITE.name} on ${s.label}`}>{s.label}</a>
+      ))}
+    </nav>
   </div>
 </div>
 
@@ -34,9 +60,9 @@ const menu = MAIN_NAV.map((item, i) => {
   <div class="wrap brand-row">
     <a href="/" class="brand" aria-label={`${SITE.name} home`}>
       <BrandMark />
-      <span>
+      <span class="brand-text">
         <span class="brand-name">{SITE.name}</span>
-        <span class="brand-tag">{SITE.tagline}.</span>
+        <span class="brand-tag">{SITE.logoLine}</span>
       </span>
     </a>
 
@@ -47,8 +73,10 @@ const menu = MAIN_NAV.map((item, i) => {
 
     <form class="search" role="search" action="/search/" method="get">
       <label for="site-search" class="sr-only">Search buying guides</label>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-      <input id="site-search" type="search" name="q" placeholder="Search guides and picks" autocomplete="off" />
+      <input id="site-search" type="search" name="q" placeholder="Search for home ideas, product reviews, and more..." autocomplete="off" enterkeyhint="search" />
+      <button type="submit" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </button>
     </form>
   </div>
 
@@ -57,10 +85,7 @@ const menu = MAIN_NAV.map((item, i) => {
       <ul class="nav-list">
         {menu.map((item) => (
           <li class={item.hasMenu ? 'has-menu' : ''}>
-            <a
-              href={item.href}
-              aria-current={path === item.href ? 'page' : undefined}
-            >{item.name}</a>
+            <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.name}</a>
 
             {item.hasMenu && (
               <button
@@ -68,7 +93,7 @@ const menu = MAIN_NAV.map((item, i) => {
                 class="menu-btn"
                 aria-expanded="false"
                 aria-controls={item.id}
-                aria-label={`Show ${item.name} topics`}
+                aria-label={`Show ${item.name} menu`}
               >
                 <span class="caret" aria-hidden="true"></span>
               </button>
@@ -87,6 +112,16 @@ const menu = MAIN_NAV.map((item, i) => {
                       </ul>
                     </div>
                   ))}
+                  {item.showGuides && (
+                    <div class="mega-col">
+                      <h2>Latest Guides</h2>
+                      <ul>
+                        {item.guides.map((g) => (
+                          <li><a href={g.href}>{g.title}</a></li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   <div class="mega-col mega-all">
                     <a href={item.href} class="all-link">All {item.name} &rarr;</a>
                     <p>{item.blurb}</p>

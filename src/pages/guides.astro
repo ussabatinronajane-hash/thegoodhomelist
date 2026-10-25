@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import HubView from '../components/HubView.astro';
+import { MAIN_NAV } from '../consts';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+<HubView
+  name="All Guides"
+  heading="All Buying Guides"
+  description="Every published buying guide on The Good Home List, newest first. Browse by section or read the latest."
+  intro="Every published guide, newest first. Looking for something specific? Try the search box above, or pick a section."
+  href="/guides/"
+  posts={posts}
+  subs={[]}
+  related={MAIN_NAV.map((n) => ({ name: n.name, href: n.href }))}
+  otherPosts={[]}
+/>
