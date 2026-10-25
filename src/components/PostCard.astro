@@ -1,5 +1,7 @@
 ---
 import { CATEGORY_MAP } from '../consts';
+import LeafIcon from './LeafIcon.astro';
+import Img from './Img.astro';
 
 export interface Props {
   post: any;
@@ -7,18 +9,21 @@ export interface Props {
 const { post } = Astro.props;
 const cat = CATEGORY_MAP[post.data.category];
 const href = `/${post.data.category}/${post.id}/`;
+const dateLabel = post.data.updatedDate ? 'Updated' : 'Published';
 const date = (post.data.updatedDate ?? post.data.pubDate).toLocaleDateString('en-US', {
   year: 'numeric', month: 'short', day: 'numeric',
 });
 ---
 <li class="card">
   <a href={href} class="card-thumb" aria-hidden="true" tabindex="-1">
-    {post.data.image && (
-      <img src={post.data.image} alt="" width="560" height="350" loading="lazy" decoding="async" />
+    {post.data.image ? (
+      <Img src={post.data.image} alt="" width={560} height={350} sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 92vw" />
+    ) : (
+      <div class="ph"><LeafIcon /></div>
     )}
   </a>
   <span class="card-eyebrow">{cat?.name}</span>
   <h3><a href={href}>{post.data.title}</a></h3>
   <p>{post.data.excerpt}</p>
-  <p class="card-meta">Updated {date}</p>
+  <p class="card-meta">{dateLabel} {date}</p>
 </li>

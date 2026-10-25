@@ -2,11 +2,13 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
-import AffiliateDisclosure from './AffiliateDisclosure.astro';
+import ArticleHeader from './ArticleHeader.astro';
+import AuthorBox from './AuthorBox.astro';
 import FAQ from './FAQ.astro';
 import TableOfContents from './TableOfContents.astro';
 import PostCard from './PostCard.astro';
-import { CATEGORY_MAP, SITE } from '../consts';
+import { CATEGORY_MAP, MAIN_NAV, SITE } from '../consts';
+import { matchesRules } from '../lib/sections';
 
 export interface Props { post: any }
 
@@ -16,17 +18,39 @@ const cat = CATEGORY_MAP[post.data.category];
 const url = `${SITE.url}/${post.data.category}/${post.id}/`;
 
 const published = post.data.pubDate;
-const updated = post.data.updatedDate ?? post.data.pubDate;
-const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const updated = post.data.updatedDate;
+const modified = updated ?? published;
 
-// Related: explicit slugs first, then fill from the same category.
-const siblings = (
-  await getCollection('posts', ({ data }) => !data.draft && data.category === post.data.category)
-).filter((p) => p.id !== post.id);
+// Label above the title: the main navigation section this guide belongs to,
+// falling back to its original category.
+const navMatch = MAIN_NAV.find((n) => matchesRules(n.rules, post.data));
+const section = navMatch
+  ? { name: navMatch.name, href: navMatch.href }
+  : { name: cat.name, href: `/${cat.slug}/` };
 
-const explicit = siblings.filter((p) => post.data.related.includes(p.id));
-const related = [...explicit, ...siblings.filter((p) => !explicit.includes(p))].slice(0, 3);
+// Related guides, best match first: ones chosen by hand, then the same
+// subcategory, then the same main section, then the same category.
+const others = (await getCollection('posts', ({ data }) => !data.draft)).filter((p) => p.id !== post.id);
+const rank = (p: any) => {
+  if (post.data.related.includes(p.id)) return 0;
+  if (post.data.subcategory && p.data.category === post.data.category && p.data.subcategory === post.data.subcategory) return 1;
+  if (navMatch && matchesRules(navMatch.rules, p.data)) return 2;
+  if (p.data.category === post.data.category) return 3;
+  return 9;
+};
+const matched = others
+  .map((p) => ({ p, r: rank(p) }))
+  .filter((x) => x.r < 9)
+  .sort((a, b) => a.r - b.r || b.p.data.pubDate.valueOf() - a.p.data.pubDate.valueOf())
+  .slice(0, 3)
+  .map((x) => x.p);
+// With few guides published, nothing may match. Offer the newest guides instead, labelled honestly.
+const hasMatch = matched.length > 0;
+const related = hasMatch
+  ? matched
+  : [...others].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
+
+const imageUrl = post.data.image ? new URL(post.data.image, SITE.url).href : undefined;
 
 const schema: Record<string, any>[] = [
   {
@@ -42,8 +66,9 @@ const schema: Record<string, any>[] = [
     '@id': `${url}#article`,
     headline: post.data.title,
     description: post.data.description,
+    ...(imageUrl && { image: [imageUrl] }),
     datePublished: published.toISOString(),
-    dateModified: updated.toISOString(),
+    dateModified: modified.toISOString(),
     author: {
       '@type': 'Person',
       name: post.data.author,
@@ -51,6 +76,7 @@ const schema: Record<string, any>[] = [
     },
     publisher: { '@id': `${SITE.url}/#organization` },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    isPartOf: { '@id': `${SITE.url}/#website` },
     inLanguage: 'en-US',
   },
 ];
@@ -59,7 +85,7 @@ if (post.data.faqs.length > 0) {
   schema.push({
     '@type': 'FAQPage',
     '@id': `${url}#faq`,
-    mainEntity: post.data.faqs.map((f) => ({
+    mainEntity: post.data.faqs.map((f: any) => ({
       '@type': 'Question',
       name: f.question,
       acceptedAnswer: { '@type': 'Answer', text: f.answer },
@@ -70,49 +96,42 @@ if (post.data.faqs.length > 0) {
 <BaseLayout
   title={post.data.title}
   description={post.data.description}
+  image={post.data.image}
   type="article"
   publishedTime={published}
-  modifiedTime={updated}
+  modifiedTime={modified}
   schema={schema}
 >
   <div class="wrap">
     <Breadcrumbs items={[{ label: cat.name, href: `/${cat.slug}/` }, { label: post.data.title }]} />
 
-    <article class="read article-head">
-      <h1>{post.data.title}</h1>
-      <div class="article-meta">
-        <span>By {post.data.author}</span>
-        <span>Updated {fmt(updated)}</span>
-      </div>
+    <ArticleHeader
+      title={post.data.title}
+      excerpt={post.data.excerpt}
+      author={post.data.author}
+      published={published}
+      updated={updated}
+      image={post.data.image}
+      imageAlt={post.data.imageAlt}
+      section={section}
+    />
 
-      {post.data.image && (
-        <img
-          src={post.data.image}
-          alt={post.data.imageAlt ?? post.data.title}
-          width="800"
-          height="450"
-          fetchpriority="high"
-          decoding="async"
-          style="border-radius:10px;margin:26px 0;width:100%;height:auto;"
-        />
-      )}
-
-      <div style="margin-top:26px;">
-        <AffiliateDisclosure />
-      </div>
-
+    <div class="article-layout">
       <TableOfContents headings={headings} />
 
-      <div class="prose">
-        <Content />
-      </div>
+      <article class="article-body">
+        <div class="prose">
+          <Content />
+        </div>
 
-      <FAQ faqs={post.data.faqs} />
-    </article>
+        <FAQ faqs={post.data.faqs} />
+        <AuthorBox author={post.data.author} />
+      </article>
+    </div>
 
     {related.length > 0 && (
-      <section class="related">
-        <div class="section-head"><h2>Related guides</h2></div>
+      <section class="related" aria-labelledby="related-title">
+        <div class="section-head"><h2 id="related-title">{hasMatch ? 'Related Guides' : 'More Guides'}</h2></div>
         <ul class="card-grid">
           {related.map((p) => <PostCard post={p} />)}
         </ul>

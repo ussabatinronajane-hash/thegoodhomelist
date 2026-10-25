@@ -1,0 +1,55 @@
+---
+// Top of every guide: section label, H1, summary, byline, disclosure, featured image.
+//
+// The date is only labelled "Updated" when the guide has an updatedDate in its
+// frontmatter. Otherwise it is labelled "Published", so the page never implies a
+// review that has not happened.
+import AffiliateDisclosure from './AffiliateDisclosure.astro';
+import Img from './Img.astro';
+
+export interface Props {
+  title: string;
+  excerpt: string;
+  author: string;
+  published: Date;
+  updated?: Date;
+  image?: string;
+  imageAlt?: string;
+  /** Where the label above the title links to. */
+  section: { name: string; href: string };
+}
+
+const { title, excerpt, author, published, updated, image, imageAlt, section } = Astro.props;
+
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const date = updated ?? published;
+---
+<header class="article-head">
+  <a class="eyebrow article-eyebrow" href={section.href}>{section.name}</a>
+  <h1>{title}</h1>
+  <p class="article-dek">{excerpt}</p>
+
+  <p class="byline">
+    <span>By <strong>{author}</strong></span>
+    <span aria-hidden="true">&middot;</span>
+    <span>{updated ? 'Updated' : 'Published'} <time datetime={date.toISOString().slice(0, 10)}>{fmt(date)}</time></span>
+    <span aria-hidden="true">&middot;</span>
+    <a href="/editorial-policy/">How we choose products</a>
+  </p>
+
+  <AffiliateDisclosure />
+
+  {image && (
+    <figure class="article-figure">
+      <Img
+        src={image}
+        alt={imageAlt ?? title}
+        width={1200}
+        height={800}
+        sizes="(min-width: 1024px) 960px, 100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </figure>
+  )}
+</header>

@@ -1,0 +1,62 @@
+---
+import { CATEGORY_MAP } from '../consts';
+import LeafIcon from './LeafIcon.astro';
+import Img from './Img.astro';
+
+export interface Props {
+  lead: any;
+  /** Smaller companion stories shown beside the lead. */
+  side?: any[];
+  /** Small label above the lead title. */
+  label?: string;
+  sideHeading?: string;
+}
+
+const { lead, side = [], label = 'Featured Buying Guide', sideHeading = 'More to Read' } = Astro.props;
+
+const dateFmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+const hrefOf = (p: any) => `/${p.data.category}/${p.id}/`;
+const stamp = (p: any) => `${p.data.updatedDate ? 'Updated' : 'Published'} ${dateFmt(p.data.updatedDate ?? p.data.pubDate)}`;
+---
+<section class="lead" aria-labelledby="lead-title">
+  <div class={`wrap lead-grid${side.length === 0 ? ' solo' : ''}`}>
+    <article class="lead-main">
+      <a href={hrefOf(lead)} class="lead-img" aria-hidden="true" tabindex="-1">
+        {lead.data.image ? (
+          <Img src={lead.data.image} alt="" width={1200} height={750} sizes="(min-width: 1024px) 700px, 92vw" loading="eager" fetchpriority="high" />
+        ) : (
+          <div class="ph"><LeafIcon /></div>
+        )}
+      </a>
+      <span class="eyebrow">{label} &middot; {CATEGORY_MAP[lead.data.category]?.name}</span>
+      <h2 id="lead-title"><a href={hrefOf(lead)}>{lead.data.title}</a></h2>
+      <p>{lead.data.excerpt}</p>
+      <p class="lead-meta">By {lead.data.author} &middot; {stamp(lead)}</p>
+      <a href={hrefOf(lead)} class="btn">Read the Guide</a>
+    </article>
+
+    {side.length > 0 && (
+      <aside class="lead-side" aria-labelledby="side-title">
+        <h2 id="side-title">{sideHeading}</h2>
+        <ul class="side-list">
+          {side.map((p) => (
+            <li class="side-item">
+              <a href={hrefOf(p)} class="card-thumb" aria-hidden="true" tabindex="-1">
+                {p.data.image ? (
+                  <Img src={p.data.image} alt="" width={224} height={224} sizes="112px" />
+                ) : (
+                  <div class="ph"><LeafIcon /></div>
+                )}
+              </a>
+              <div>
+                <span class="card-eyebrow">{CATEGORY_MAP[p.data.category]?.name}</span>
+                <h3><a href={hrefOf(p)}>{p.data.title}</a></h3>
+                <p class="card-meta">{stamp(p)}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+  </div>
+</section>

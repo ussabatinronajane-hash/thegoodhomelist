@@ -1,0 +1,25 @@
+---
+import { SITE } from '../consts';
+
+export interface Props {
+  author: string;
+}
+const { author } = Astro.props;
+// Only the site owner has a bio on file. Any other byline shows just the name.
+const isOwner = author === SITE.author;
+---
+<aside class="author-box" aria-label="About the author">
+  <p class="author-name">{author}</p>
+  {isOwner ? (
+    <p>
+      Founder and editor of {SITE.name}. Guides are researched and written to answer one
+      question plainly: which one should you buy, and who should skip it.{' '}
+      <a href="/about/">About the site</a>.
+    </p>
+  ) : null}
+  <p class="author-links">
+    <a href="/editorial-policy/">How we choose products</a>
+    <a href="/affiliate-disclosure/">Affiliate disclosure</a>
+    <a href="/contact/">Report a correction</a>
+  </p>
+</aside>

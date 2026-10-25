@@ -56,8 +56,80 @@ collections:
           - { label: "Smart Home", value: "smart-home" }
           - { label: "Kitchen & Dining", value: "kitchen" }
           - { label: "Home & Living", value: "home" }
-          - { label: "Patio, Lawn & Garden", value: "garden" }
+          - { label: "Garden & Patio", value: "garden" }
           - { label: "Tools & Home Improvement", value: "tools" }
+
+      - label: "Subcategory"
+        name: "subcategory"
+        widget: "select"
+        required: false
+        hint: "Optional. Must belong to the category above, or the site build will stop with an error. It decides which dropdown, section page and related guides this guide appears in."
+        options:
+          - { label: "Smart Home / Smart Home Lighting", value: "smart-lighting" }
+          - { label: "Smart Home / Plugs and Outlets", value: "plugs-and-outlets" }
+          - { label: "Smart Home / Voice Assistants and Hubs", value: "voice-assistants-and-hubs" }
+          - { label: "Smart Home / Alexa Compatible", value: "alexa-compatible" }
+          - { label: "Smart Home / Smart Locks and Entry", value: "smart-locks-and-entry" }
+          - { label: "Smart Home / Security Cameras and Systems", value: "security-cameras" }
+          - { label: "Smart Home / Detectors and Sensors", value: "detectors-and-sensors" }
+          - { label: "Smart Home / Heating and Cooling", value: "heating-and-cooling" }
+          - { label: "Smart Home / Vacuums and Mops", value: "vacuums-and-mops" }
+          - { label: "Smart Home / Kitchen", value: "smart-kitchen" }
+          - { label: "Smart Home / Home Entertainment", value: "home-entertainment" }
+          - { label: "Smart Home / WIFI and Networking", value: "wifi-and-networking" }
+          - { label: "Smart Home / Pet", value: "smart-pet" }
+          - { label: "Smart Home / Lawn and Garden", value: "smart-lawn-and-garden" }
+          - { label: "Kitchen & Dining / Cookware", value: "cookware" }
+          - { label: "Kitchen & Dining / Bakeware", value: "bakeware" }
+          - { label: "Kitchen & Dining / Kitchen Utensils & Gadgets", value: "utensils-and-gadgets" }
+          - { label: "Kitchen & Dining / Small Appliances", value: "small-appliances" }
+          - { label: "Kitchen & Dining / Coffee, Tea & Espresso Appliances", value: "coffee-tea-espresso" }
+          - { label: "Kitchen & Dining / Bar Tools & Drinkware", value: "bar-tools" }
+          - { label: "Kitchen & Dining / Glassware & Drinkware", value: "glassware" }
+          - { label: "Kitchen & Dining / Wine Accessories", value: "wine-accessories" }
+          - { label: "Kitchen & Dining / Home Brewing & Wine Making", value: "home-brewing" }
+          - { label: "Kitchen & Dining / Dining & Entertaining", value: "dining-and-entertaining" }
+          - { label: "Kitchen & Dining / Kitchen & Table Linens", value: "kitchen-linens" }
+          - { label: "Kitchen & Dining / Storage & Organization", value: "kitchen-storage" }
+          - { label: "Home & Living / Bath", value: "bath" }
+          - { label: "Home & Living / Bedding", value: "bedding" }
+          - { label: "Home & Living / Furniture", value: "furniture" }
+          - { label: "Home & Living / Kids' Home Store", value: "kids-home" }
+          - { label: "Home & Living / Home Décor", value: "home-decor" }
+          - { label: "Home & Living / Wall Décor", value: "wall-decor" }
+          - { label: "Home & Living / Seasonal Décor", value: "seasonal-decor" }
+          - { label: "Home & Living / Party Supplies", value: "party-supplies" }
+          - { label: "Home & Living / Cleaning Supplies", value: "cleaning-supplies" }
+          - { label: "Home & Living / Vacuums & Floor Care", value: "vacuums-and-floor-care" }
+          - { label: "Home & Living / Irons & Steamers", value: "irons-and-steamers" }
+          - { label: "Home & Living / Heating, Cooling & Air Quality", value: "air-quality" }
+          - { label: "Home & Living / Storage & Organization", value: "storage-and-organization" }
+          - { label: "Garden & Patio / Patio Furniture & Accessories", value: "patio-furniture" }
+          - { label: "Garden & Patio / Grills & Outdoor Cooking", value: "grills-outdoor-cooking" }
+          - { label: "Garden & Patio / Outdoor Heating", value: "outdoor-heating" }
+          - { label: "Garden & Patio / Outdoor Décor", value: "outdoor-decor" }
+          - { label: "Garden & Patio / Pools, Hot Tubs & Supplies", value: "pools-and-hot-tubs" }
+          - { label: "Garden & Patio / Gardening", value: "gardening" }
+          - { label: "Garden & Patio / Backyard Birding & Wildlife", value: "birding-and-wildlife" }
+          - { label: "Garden & Patio / Pest Control", value: "pest-control" }
+          - { label: "Garden & Patio / Farm & Ranch", value: "farm-and-ranch" }
+          - { label: "Garden & Patio / Mowers & Outdoor Power Tools", value: "mowers-and-power-tools" }
+          - { label: "Garden & Patio / Generators & Portable Power", value: "generators" }
+          - { label: "Garden & Patio / Snow Removal", value: "snow-removal" }
+          - { label: "Garden & Patio / Outdoor Storage", value: "outdoor-storage" }
+          - { label: "Tools & Home Improvement / Power & Hand Tools", value: "power-and-hand-tools" }
+          - { label: "Tools & Home Improvement / Air Tools", value: "air-tools" }
+          - { label: "Tools & Home Improvement / Measuring & Layout Tools", value: "measuring-and-layout" }
+          - { label: "Tools & Home Improvement / Building Supplies", value: "building-supplies" }
+          - { label: "Tools & Home Improvement / Hardware", value: "hardware" }
+          - { label: "Tools & Home Improvement / Paint, Wall Treatments & Supplies", value: "paint-and-walls" }
+          - { label: "Tools & Home Improvement / Electrical", value: "electrical" }
+          - { label: "Tools & Home Improvement / Plumbing", value: "plumbing" }
+          - { label: "Tools & Home Improvement / Kitchen & Bath Fixtures", value: "kitchen-bath-fixtures" }
+          - { label: "Tools & Home Improvement / Lighting & Ceiling Fans", value: "lighting-and-fans" }
+          - { label: "Tools & Home Improvement / Appliances", value: "appliances" }
+          - { label: "Tools & Home Improvement / Safety & Security", value: "safety-and-security" }
+          - { label: "Tools & Home Improvement / Storage & Home Organization", value: "tool-storage" }
 
       - label: "Published date"
         name: "pubDate"

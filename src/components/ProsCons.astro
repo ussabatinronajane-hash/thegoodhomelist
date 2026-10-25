@@ -1,0 +1,31 @@
+---
+// Pros and cons for one product. Render it only when the guide has evidence for
+// both lists, and say what that evidence is in `basis`, for example
+// "Based on manufacturer specifications and published owner reviews."
+// Leave a list empty and only the other one is shown.
+export interface Props {
+  pros?: string[];
+  cons?: string[];
+  basis?: string;
+}
+const { pros = [], cons = [], basis } = Astro.props;
+---
+{(pros.length > 0 || cons.length > 0) && (
+  <div class="pros-cons">
+    <div class="pros-cons-grid">
+      {pros.length > 0 && (
+        <section aria-label="Pros">
+          <h4>Pros</h4>
+          <ul class="pc-list pc-pros">{pros.map((p) => <li>{p}</li>)}</ul>
+        </section>
+      )}
+      {cons.length > 0 && (
+        <section aria-label="Cons">
+          <h4>Cons</h4>
+          <ul class="pc-list pc-cons">{cons.map((c) => <li>{c}</li>)}</ul>
+        </section>
+      )}
+    </div>
+    {basis && <p class="pc-basis">{basis}</p>}
+  </div>
+)}

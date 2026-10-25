@@ -1,0 +1,140 @@
+---
+// Shared template for every category landing page: the original category hubs
+// (/smart-home/, /garden/, /kitchen/ ...) and the brand sections
+// (/home-kitchen/, /home-decor/, /organization-cleaning/).
+//
+// Everything shown comes from published guides. Nothing is invented: a page with
+// no guides says so, lists the real guides published elsewhere on the site, and
+// asks search engines not to index it until it has content of its own.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import LeadStory from './LeadStory.astro';
+import PostCard from './PostCard.astro';
+import { SITE } from '../consts';
+
+export interface Props {
+  name: string;
+  heading: string;
+  description: string;
+  intro: string;
+  /** Canonical path, with leading and trailing slash. */
+  href: string;
+  /** Published guides for this page, newest first. */
+  posts: any[];
+  /** Subcategory links that already have guides. */
+  subs: { name: string; href: string }[];
+  /** Other sections a reader might want next. */
+  related: { name: string; href: string }[];
+  /** Published guides from elsewhere on the site, for "Related Guides". */
+  otherPosts: any[];
+}
+
+const { name, heading, description, intro, href, posts, subs, related, otherPosts } = Astro.props;
+
+const lead = posts.find((p) => p.data.featured) ?? posts[0];
+const rest = posts.filter((p) => p !== lead);
+const side = rest.slice(0, 3);
+const grid = rest.slice(3);
+const url = `${SITE.url}${href}`;
+
+const schema: Record<string, any>[] = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name, item: url },
+    ],
+  },
+  {
+    '@type': 'CollectionPage',
+    '@id': `${url}#collection`,
+    name: heading,
+    description,
+    url,
+    isPartOf: { '@id': `${SITE.url}/#website` },
+    ...(posts.length > 0 && {
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: posts.map((p, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: `${SITE.url}/${p.data.category}/${p.id}/`,
+          name: p.data.title,
+        })),
+      },
+    }),
+  },
+];
+---
+<BaseLayout title={heading} description={description} schema={schema} noindex={posts.length === 0}>
+  <div class="hub-head">
+    <div class="wrap">
+      <Breadcrumbs items={[{ label: name }]} />
+      <h1>{heading}</h1>
+      <p class="hub-intro">{intro}</p>
+
+      {subs.length > 0 && (
+        <nav aria-label={`${name} topics`}>
+          <ul class="subnav">
+            {subs.map((s) => (
+              <li><a href={s.href}>{s.name}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </div>
+  </div>
+
+  {lead ? (
+    <LeadStory lead={lead} side={side} label="Featured Guide" />
+  ) : (
+    <section class="section">
+      <div class="wrap">
+        <div class="empty-state">
+          <h2>Guides Are on the Way</h2>
+          <p>
+            We have not published a guide in this section yet, and we would rather wait than fill
+            the page with filler. In the meantime, here are the guides that are live.
+          </p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {grid.length > 0 && (
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head"><h2>More {name} Guides</h2></div>
+        <ul class="card-grid">
+          {grid.map((p) => <PostCard post={p} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {otherPosts.length > 0 && (
+    <section class="section" aria-labelledby="related-guides">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="related-guides">{posts.length > 0 ? 'Related Guides' : 'Published Guides'}</h2>
+        </div>
+        <ul class="card-grid">
+          {otherPosts.map((p) => <PostCard post={p} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {related.length > 0 && (
+    <section class="section" aria-labelledby="related-sections">
+      <div class="wrap">
+        <div class="section-head"><h2 id="related-sections">Explore More Topics</h2></div>
+        <ul class="subnav">
+          {related.map((r) => (
+            <li><a href={r.href}>{r.name}</a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+</BaseLayout>

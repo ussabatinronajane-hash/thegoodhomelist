@@ -2,38 +2,81 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import { SITE, CATEGORIES } from '../consts';
+import LeadStory from '../components/LeadStory.astro';
+import LeafIcon from '../components/LeafIcon.astro';
+import Img from '../components/Img.astro';
+import TopPickCard from '../components/TopPickCard.astro';
+import { SITE, CATEGORY_MAP, MAIN_NAV } from '../consts';
+import { matchesRules } from '../lib/sections';
+import { TOP_PICKS } from '../data/top-picks';
 
 const all = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
-const featured = all.filter((p) => p.data.featured).slice(0, 3);
-const latest = all.filter((p) => !featured.includes(p)).slice(0, 6);
+// Lead story: the newest featured guide, falling back to the newest guide.
+const featured = all.filter((p) => p.data.featured);
+const lead = featured[0] ?? all[0];
+const rest = all.filter((p) => p !== lead);
+// Highlights: other featured guides first, then the newest of the rest.
+const side = [...rest.filter((p) => p.data.featured), ...rest.filter((p) => !p.data.featured)].slice(0, 3);
+const shown = new Set([lead, ...side]);
+
+const latest = all.filter((p) => !shown.has(p)).slice(0, 6);
+
+const tiles = MAIN_NAV.map((n) => ({
+  ...n,
+  count: n.rules ? all.filter((p) => matchesRules(n.rules, p.data)).length : null,
+}));
+
+// Home inspiration: guides about the house and garden that are not already on screen.
+const inspiration = all
+  .filter((p) => ['home', 'garden'].includes(p.data.category) && !shown.has(p))
+  .slice(0, 3);
+
+const published = new Map(all.map((p) => [p.id, p]));
+// Homepage shows six picks, taken in turn from each guide so one guide does not fill the row.
+const byGuide = new Map<string, typeof TOP_PICKS>();
+for (const p of TOP_PICKS.filter((p) => published.has(p.guide))) {
+  byGuide.set(p.guide, [...(byGuide.get(p.guide) ?? []), p]);
+}
+const picks: typeof TOP_PICKS = [];
+for (let i = 0; picks.length < 6 && [...byGuide.values()].some((g) => g.length > i); i++) {
+  for (const g of byGuide.values()) if (g[i] && picks.length < 6) picks.push(g[i]);
+}
+
+const hrefOf = (p: any) => `/${p.data.category}/${p.id}/`;
 ---
 <BaseLayout
-  title={`${SITE.name} | ${SITE.tagline}`}
+  title={`${SITE.name} | Practical, Stylish Home Finds`}
   description={SITE.description}
 >
-  <section class="hero">
+  <section class="home-intro">
     <div class="wrap">
-      <h1>Honest picks for a better home</h1>
+      <h1>Practical, Stylish Finds for a Home That Works Beautifully</h1>
       <p>
-        No sponsored fluff and no ranking a product just because it pays more. Every guide here
-        starts with the question you are actually asking: which one should I buy, and why.
+        Researched buying guides and comparisons for renters, first-time homeowners and anyone
+        making the most of a small space.
       </p>
     </div>
   </section>
 
+  {lead && <LeadStory lead={lead} side={side} />}
+
   <section class="section">
     <div class="wrap">
-      <div class="section-head"><h2>Browse by category</h2></div>
+      <div class="section-head"><h2>Browse by Category</h2></div>
       <ul class="tiles">
-        {CATEGORIES.map((c) => (
+        {tiles.map((t) => (
           <li>
-            <a href={`/${c.slug}/`} class="tile">
-              <strong>{c.name}</strong>
-              <span>{c.intro.split('.')[0]}.</span>
+            <a href={t.href} class="tile">
+              <strong>{t.name}</strong>
+              <span>{t.blurb}</span>
+              {t.count !== null && (
+                <span class="tile-count">
+                  {t.count > 0 ? `${t.count} ${t.count === 1 ? 'Guide' : 'Guides'}` : 'Guides Coming Soon'}
+                </span>
+              )}
             </a>
           </li>
         ))}
@@ -41,23 +84,10 @@ const latest = all.filter((p) => !featured.includes(p)).slice(0, 6);
     </div>
   </section>
 
-  {featured.length > 0 && (
-    <section class="section">
-      <div class="wrap">
-        <div class="section-head"><h2>Start here</h2></div>
-        <ul class="card-grid">
-          {featured.map((post) => <PostCard post={post} />)}
-        </ul>
-      </div>
-    </section>
-  )}
-
   {latest.length > 0 && (
     <section class="section">
       <div class="wrap">
-        <div class="section-head">
-          <h2>Latest guides</h2>
-        </div>
+        <div class="section-head"><h2>Latest Buying Guides</h2></div>
         <ul class="card-grid">
           {latest.map((post) => <PostCard post={post} />)}
         </ul>
@@ -65,11 +95,83 @@ const latest = all.filter((p) => !featured.includes(p)).slice(0, 6);
     </section>
   )}
 
+  {picks.length > 0 && (
+    <section class="band" aria-labelledby="picks-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="picks-title">Our Top Picks</h2>
+          <p>
+            Standout picks from our published guides. Each one links to the full write-up, so you
+            can see why it made the list and who should skip it. Buttons marked &ldquo;Check
+            Price&rdquo; are affiliate links.
+            <a href="/best-picks/">See all best picks</a>.
+          </p>
+        </div>
+        <ul class="top-picks">
+          {picks.map((p) => <TopPickCard pick={p} category={published.get(p.guide)!.data.category} />)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {inspiration.length >= 2 && (
+    <section class="section" aria-labelledby="inspo-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="inspo-title">Home Inspiration</h2>
+          <p>Ideas for organizing, refreshing and getting more from the space you have.</p>
+        </div>
+        <div class={`inspo inspo-${inspiration.length}`}>
+          {inspiration.map((p) => (
+            <a href={hrefOf(p)} class="inspo-item">
+              {p.data.image ? (
+                <Img src={p.data.image} alt="" width={600} height={750} sizes="(min-width: 1024px) 380px, 92vw" />
+              ) : (
+                <div class="ph"><LeafIcon /></div>
+              )}
+              <div class="inspo-cap">
+                <span>{CATEGORY_MAP[p.data.category]?.name}</span>
+                <strong>{p.data.title}</strong>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="band band-cream" aria-labelledby="about-title">
+    <div class="wrap about-grid">
+      <div>
+        <h2 id="about-title">About The Good Home List</h2>
+        <p>
+          {SITE.name} helps renters, first-time homeowners and small-space dwellers find
+          practical, stylish products without wading through hundreds of near-identical listings.
+          Every guide is researched, compared and written to answer one question plainly: which
+          one should you buy, and who should skip it?
+        </p>
+        <p>
+          We earn a commission when you buy through some links, at no extra cost to you. That
+          never decides what makes a list.
+        </p>
+        <div class="about-actions">
+          <a href="/about/" class="btn">Read Our Story</a>
+          <a href="/editorial-policy/" class="btn btn-ghost">How We Choose Products</a>
+        </div>
+      </div>
+      <ul class="principles">
+        <li><strong>Researched, Not Sponsored</strong><span>No brand pays for a spot in a guide or sees a draft before it goes live.</span></li>
+        <li><strong>Honest About Limits</strong><span>If we have not tested a product ourselves, the guide says so.</span></li>
+        <li><strong>Clear Disclosure</strong><span>Affiliate links are marked on every page, with the full policy one click away.</span></li>
+      </ul>
+    </div>
+  </section>
+
   {all.length === 0 && (
     <section class="section">
       <div class="wrap read">
         <p class="muted">
-          No posts published yet. Add your first guide in the admin panel at
+          No guides published yet. Add your first guide in the admin panel at
           <code>/admin</code> and it will appear here.
         </p>
       </div>

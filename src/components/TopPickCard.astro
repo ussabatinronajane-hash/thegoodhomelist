@@ -1,0 +1,22 @@
+---
+import { amazonUrl, AFFILIATE_ATTRS } from '../lib/amazon';
+import type { TopPick } from '../data/top-picks';
+
+export interface Props {
+  pick: TopPick;
+  /** Category slug of the guide this pick comes from. */
+  category: string;
+}
+const { pick, category } = Astro.props;
+---
+<li class="top-pick">
+  <span class="top-pick-badge">{pick.badge}</span>
+  <h3>{pick.name}</h3>
+  <p>{pick.note}</p>
+  <div class="top-pick-actions">
+    <a class="text-link" href={`/${category}/${pick.guide}/#${pick.anchor}`}>Read the Review</a>
+    {pick.asin && (
+      <a class="btn" href={amazonUrl(pick.asin)} {...AFFILIATE_ATTRS}>Check Price on Amazon<span class="sr-only">: {pick.name} (affiliate link)</span></a>
+    )}
+  </div>
+</li>

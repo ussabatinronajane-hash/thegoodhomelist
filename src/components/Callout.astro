@@ -1,0 +1,15 @@
+---
+// Highlighted aside for buying advice, a heads-up, or a caution.
+//
+//   <Callout title="What to check before you buy">Measure first...</Callout>
+//   <Callout type="warning" title="Check the size">...</Callout>
+export interface Props {
+  type?: 'advice' | 'note' | 'warning';
+  title?: string;
+}
+const { type = 'advice', title } = Astro.props;
+---
+<aside class={`callout callout-${type}`}>
+  {title && <p class="callout-title">{title}</p>}
+  <div class="callout-body"><slot /></div>
+</aside>

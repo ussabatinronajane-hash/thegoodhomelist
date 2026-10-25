@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import PostCard from './PostCard.astro';
@@ -13,8 +14,13 @@ export interface Props {
 const { cat, sub, posts } = Astro.props;
 const url = `${SITE.url}/${cat.slug}/${sub.slug}/`;
 
-// Sibling subcategories that also have guides, for lateral navigation.
-const siblings = (SUBCATEGORIES[cat.slug] ?? []).filter((s) => s.slug !== sub.slug);
+// Sibling subcategories that also have a published guide. Subcategories without
+// one have no page, so linking to them would be a 404.
+const published = await getCollection('posts', ({ data }) => !data.draft);
+const usedSubs = new Set(
+  published.filter((p) => p.data.category === cat.slug && p.data.subcategory).map((p) => p.data.subcategory)
+);
+const siblings = (SUBCATEGORIES[cat.slug] ?? []).filter((s) => s.slug !== sub.slug && usedSubs.has(s.slug));
 
 const schema = [
   {
@@ -36,29 +42,34 @@ const schema = [
 ];
 ---
 <BaseLayout title={sub.heading} description={sub.description} schema={schema}>
-  <div class="wrap">
-    <Breadcrumbs items={[{ label: cat.name, href: `/${cat.slug}/` }, { label: sub.name }]} />
-
-    <div class="read" style="margin-bottom:30px;">
+  <div class="hub-head">
+    <div class="wrap">
+      <Breadcrumbs items={[{ label: cat.name, href: `/${cat.slug}/` }, { label: sub.name }]} />
       <h1>{sub.heading}</h1>
-      <p class="muted" style="font-size:1.06rem;">{sub.description}</p>
+      <p class="hub-intro">{sub.description}</p>
+
+      {siblings.length > 0 && (
+        <nav aria-label={`More ${cat.name} topics`}>
+          <ul class="subnav">
+            <li><a href={`/${cat.slug}/`}>All {cat.name}</a></li>
+            {siblings.map((s) => (
+              <li><a href={`/${cat.slug}/${s.slug}/`}>{s.name}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </div>
-
-    {siblings.length > 0 && (
-      <ul class="subnav">
-        <li><a href={`/${cat.slug}/`}>All {cat.name}</a></li>
-        {siblings.map((s) => (
-          <li><a href={`/${cat.slug}/${s.slug}/`}>{s.name}</a></li>
-        ))}
-      </ul>
-    )}
-
-    {posts.length > 0 ? (
-      <ul class="card-grid">
-        {posts.map((p) => <PostCard post={p} />)}
-      </ul>
-    ) : (
-      <p class="muted">Guides for this topic are on the way.</p>
-    )}
   </div>
+
+  <section class="section">
+    <div class="wrap">
+      {posts.length > 0 ? (
+        <ul class="card-grid">
+          {posts.map((p) => <PostCard post={p} />)}
+        </ul>
+      ) : (
+        <p class="muted">Guides for this topic are on the way.</p>
+      )}
+    </div>
+  </section>
 </BaseLayout>

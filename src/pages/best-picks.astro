@@ -1,0 +1,78 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import TopPickCard from '../components/TopPickCard.astro';
+import AffiliateDisclosure from '../components/AffiliateDisclosure.astro';
+import { SITE, CATEGORY_MAP } from '../consts';
+import { TOP_PICKS } from '../data/top-picks';
+
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const byId = new Map(posts.map((p) => [p.id, p]));
+
+// Group picks by the guide they come from, keeping the order in top-picks.ts.
+// A guide that is a draft or has been removed drops out automatically.
+const groups: { post: any; picks: typeof TOP_PICKS }[] = [];
+for (const pick of TOP_PICKS) {
+  const post = byId.get(pick.guide);
+  if (!post) continue;
+  let g = groups.find((x) => x.post.id === post.id);
+  if (!g) groups.push((g = { post, picks: [] }));
+  g.picks.push(pick);
+}
+
+const title = 'Best Picks for Your Home';
+const description =
+  'Our top product picks from every buying guide, in one place. Each one links to the full write-up so you can see why it made the list.';
+
+const schema = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Best Picks', item: `${SITE.url}/best-picks/` },
+    ],
+  },
+  {
+    '@type': 'CollectionPage',
+    '@id': `${SITE.url}/best-picks/#collection`,
+    name: title,
+    description,
+    url: `${SITE.url}/best-picks/`,
+    isPartOf: { '@id': `${SITE.url}/#website` },
+  },
+];
+---
+<BaseLayout title={title} description={description} schema={schema}>
+  <div class="wrap">
+    <Breadcrumbs items={[{ label: 'Best Picks' }]} />
+
+    <div class="read intro-block">
+      <h1>{title}</h1>
+      <p class="lede">
+        The standout product from each of our buying guides, gathered in one place. Every pick
+        links to the full write-up, where you can see how it compares and who should skip it.
+      </p>
+      <AffiliateDisclosure />
+    </div>
+
+    {groups.length > 0 ? (
+      groups.map(({ post, picks }) => (
+        <section class="picks-group" aria-labelledby={`g-${post.id}`}>
+          <div class="section-head">
+            <h2 id={`g-${post.id}`}>{post.data.title}</h2>
+            <p>
+              {CATEGORY_MAP[post.data.category]?.name} &middot;{' '}
+              <a href={`/${post.data.category}/${post.id}/`}>Read the full guide</a>
+            </p>
+          </div>
+          <ul class="top-picks">
+            {picks.map((p) => <TopPickCard pick={p} category={post.data.category} />)}
+          </ul>
+        </section>
+      ))
+    ) : (
+      <p class="muted">Picks will appear here as guides are published.</p>
+    )}
+  </div>
+</BaseLayout>
