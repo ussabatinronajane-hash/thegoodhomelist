@@ -176,6 +176,10 @@ const social = [
       if (openBtn) {
         closeAll();
         openBtn.focus();
+      } else if (toggle && header.classList.contains('nav-open')) {
+        header.classList.remove('nav-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.focus();
       }
     });
     var list = header.querySelector('.nav-list');
